@@ -10,7 +10,7 @@ const VERSION string = "0.9.0"
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
-	Use:   "version",
+	Use:   "ver",
 	Short: "Print  version of this app",
 	Long: `Print version of this app`,
 	Run: func(cmd *cobra.Command, args []string) {
