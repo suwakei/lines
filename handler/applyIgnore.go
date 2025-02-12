@@ -1,6 +1,7 @@
 package handler
 
 import (
+<<<<<<< HEAD
 	"os"
 	"fmt"
 	"bufio"
@@ -30,6 +31,15 @@ func MakeIgnoreList(ignoreFile string) ([]string, error) {
 	defer f.Close()
 
 	scanner := bufio.NewScanner(f)
+=======
+	"io"
+	"bufio"
+	"strings"
+)
+
+func MakeIgnoreList(ignoreFile io.Reader) ([]string, error) {
+	scanner := bufio.NewScanner(ignoreFile)
+>>>>>>> b223904f860012f99bb73831dcb1feb973a60336
 	var ignoreList []string
 	for scanner.Scan() {
 		if strings.HasPrefix(scanner.Text(), "#") {

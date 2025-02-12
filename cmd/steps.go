@@ -44,6 +44,17 @@ var (
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return
 			}
+			inputPath := args[0]
+			files, err := handler.Search(inputPath)
+			if err != nil {
+				fmt.Println("[ERROR]: failed to get current directory!\n", err)
+				return
+			}
+			// search and apply ignorefile or ignore flag
+			for _, file := range files {
+				fmt.Println(file)
+
+			}
 
 			if ignoreSpecified {
 				if ignoreFile == "" {
