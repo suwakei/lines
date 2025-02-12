@@ -5,7 +5,7 @@ import (
 	fp "path/filepath"
 )
 
-func Search(path string) ([]string, error) {
+func Search(path string, ignores []string) ([]string, error) {
 	var files []string
 	path, err := Parse(path)
 	if err != nil {

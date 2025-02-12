@@ -35,38 +35,58 @@ var (
 			//outputPath, _ := cmd.Flags().GetString("output")
 			ignoreFile, _ := cmd.Flags().GetString("ignore")
 			exts, _ := cmd.Flags().GetStringSlice("ext")
+
 			ignoreSpecified := cmd.Flags().Changed("ignore")
-			files, err := handler.Search(inputPath)
+			extSpecified := cmd.Flags().Changed("ext")
+			var err error
 
-			fmt.Println(exts)
+			if ignoreSpecified {
+				if ignoreFile == "" {
+					ignoreFile = ".gitignore"
+					ignoreList, err = handler.MakeIgnoreList[string](ignoreFile)
+					if err != nil {
+						fmt.Println("[ERROR]: failed to make ignore list! with ignore flag\n", err)
+						return
+					}
+				} else {
+					ignoreList, err = handler.MakeIgnoreList[string](ignoreFile)
+					if err != nil {
+						fmt.Println("[ERROR]: failed to make ignore list!\n", err)
+						return
+					}
+				}
+			}
 
+			if extSpecified {
+				if len(ignoreList) == 0 {
+					ignoreList, err = handler.MakeIgnoreList[[]string](exts)
+					if err != nil {
+						fmt.Println("[ERROR]: failed to make ignore list! with ext flag\n", err)
+						return
+					}
+				} else {
+					temp, err := handler.MakeIgnoreList[[]string](exts)
+					if err != nil {
+						fmt.Println("[ERROR]: failed to make ignore list! with ext flag\n", err)
+						return
+					}
+					ignoreList = append(ignoreList, temp...)
+				}
+			}
+
+			// search and apply ignorefile or ignore flag
+			files, err := handler.Search(inputPath, ignoreList)
 			if err != nil {
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return
 			}
 
-			if ignoreSpecified {
-				if ignoreFile == "" {
-					ignoreFile = ".gitignore"
-					ignoreList, err = handler.MakeIgnoreList(ignoreFile)
-					if err != nil {
-						fmt.Println("[ERROR]: failed to make ignore list!\n", err)
-						return
-					}
-				} else {
-					ignoreList, err = handler.MakeIgnoreList(ignoreFile)
-					if err != nil {
-						fmt.Println("[ERROR]: failed to make ignore list!\n", err)
-						return
-					}
-				}
-				for _, i := range ignoreList {
-					fmt.Println(i)
-				}
-			}
-			// search and apply ignorefile or ignore flag
+			fmt.Println(exts)
 			for _, file := range files {
 				fmt.Println(file)
+			}
+			for _, i := range ignoreList {
+				fmt.Println(i)
 			}
 
 		} else if len(args) == 0 {
@@ -89,7 +109,7 @@ func init() {
 	rootCmd.Flags().BoolP("version", "v", false, "Print version of this app")
 	rootCmd.Flags().StringP("output", "o", "", "input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt]")
 	rootCmd.Flags().StringP("ignore", "i", "", "input your .gitignore file path. ignore extentions in .gitignore file. (default: .gitignore)")
-	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=.json, .js, .go\" or \"-e=.json -e=.js -e=.go\". (default: none)")
+	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=test.json, *.js, *.go\" or \"-e=test.json -e=*.js -e=*.go\". (default: none)")
 }
 
 
