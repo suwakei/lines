@@ -1,21 +1,18 @@
 package handler
 
 import (
-<<<<<<< HEAD
 	"os"
 	"fmt"
 	"bufio"
 	"strings"
-	fp "path/filepath"
 )
 
 func MakeIgnoreList(ignoreFile string) ([]string, error) {
 	if ignoreFile != ".gitignore" {
-		abs, _ := fp.Abs(ignoreFile)
+		abs, _ := Parse(ignoreFile)
 		return nil, fmt.Errorf("[INFO]: ignore file must be .gitignore\n not exist %s", abs)
 	}
-
-	p, err := fp.Abs(ignoreFile)
+	p, err := Parse(ignoreFile)
 	if err != nil {
 		return nil, err
 	}
@@ -24,23 +21,13 @@ func MakeIgnoreList(ignoreFile string) ([]string, error) {
 		return nil, err
 	}
 
+	var ignoreList []string
 	f, err := os.Open(p)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
-
 	scanner := bufio.NewScanner(f)
-=======
-	"io"
-	"bufio"
-	"strings"
-)
-
-func MakeIgnoreList(ignoreFile io.Reader) ([]string, error) {
-	scanner := bufio.NewScanner(ignoreFile)
->>>>>>> b223904f860012f99bb73831dcb1feb973a60336
-	var ignoreList []string
 	for scanner.Scan() {
 		if strings.HasPrefix(scanner.Text(), "#") {
 			continue
@@ -51,6 +38,3 @@ func MakeIgnoreList(ignoreFile io.Reader) ([]string, error) {
 	}
 	return ignoreList, nil
 }
-
-
-

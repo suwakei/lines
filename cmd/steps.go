@@ -44,17 +44,6 @@ var (
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return
 			}
-			inputPath := args[0]
-			files, err := handler.Search(inputPath)
-			if err != nil {
-				fmt.Println("[ERROR]: failed to get current directory!\n", err)
-				return
-			}
-			// search and apply ignorefile or ignore flag
-			for _, file := range files {
-				fmt.Println(file)
-
-			}
 
 			if ignoreSpecified {
 				if ignoreFile == "" {
@@ -100,7 +89,7 @@ func init() {
 	rootCmd.Flags().BoolP("version", "v", false, "Print version of this app")
 	rootCmd.Flags().StringP("output", "o", "", "input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt]")
 	rootCmd.Flags().StringP("ignore", "i", "", "input your .gitignore file path. ignore extentions in .gitignore file. (default: .gitignore)")
-	rootCmd.Flags().StringP("ext", "e", "", "input extension you don't want to count. (default: none)")
+	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=.json, .js, .go\" or \"-e=.json -e=.js -e=.go\". (default: none)")
 }
 
 
