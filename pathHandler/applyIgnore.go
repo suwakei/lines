@@ -1,4 +1,4 @@
-package handler
+package pathHandler
 
 import (
 	"os"
@@ -9,6 +9,7 @@ import (
 
 func MakeIgnoreList[eOri string | []string] (ignores eOri) ([]string, error) {
 	var ignoreList []string
+	ignoreList = append(ignoreList, "*.exe", "*.com", "*.dll", "*.so", "*.dylib", "*.xls", "*.xlsx", "*.pdf", "*.doc", "*.docx", "*.ppt", "*.pptx")
 	if ignoreFilePath, ok := any(ignores).(string); ok{
 		if ignoreFilePath != ".gitignore" {
 			abs, _ := Parse(ignoreFilePath)
