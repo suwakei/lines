@@ -30,62 +30,80 @@ var (
 		}
 
 		if len(args) > 0 {
-			var ignoreList []string
-			inputPath := args[0]
+			inputPath, err := pathHandler.Parse(args[0])
+			if err != nil {
+				fmt.Println("[ERROR]: failed to parse input path!\n", err)
+				return
+			}
+
 			//outputPath, _ := cmd.Flags().GetString("output")
 			ignoreFile, _ := cmd.Flags().GetString("ignore")
 			exts, _ := cmd.Flags().GetStringSlice("ext")
 
 			ignoreSpecified := cmd.Flags().Changed("ignore")
 			extSpecified := cmd.Flags().Changed("ext")
-			var err error
 
+			var ignoreListMap map[string][]string = make(map[string][]string, 2)
+			ignoreListMap["file"] = append(ignoreListMap["file"], "*.exe", "*.com", "*.dll", "*.so", "*.dylib", "*.xls", "*.xlsx", "*.pdf", "*.doc", "*.docx", "*.ppt", "*.pptx")
 			if ignoreSpecified {
 				if ignoreFile == "" {
 					ignoreFile = ".gitignore"
-					ignoreList, err = pathHandler.MakeIgnoreList[string](ignoreFile)
+					temp, err := pathHandler.MakeIgnoreList[string](ignoreFile)
+					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
+					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 					if err != nil {
-						fmt.Println("[ERROR]: failed to make ignore list! with ignore flag\n", err)
+						fmt.Println("[ERROR]: failed to make ignore listMap! with ignore flag\n", err)
 						return
 					}
 				} else {
-					ignoreList, err = pathHandler.MakeIgnoreList[string](ignoreFile)
+					temp, err := pathHandler.MakeIgnoreList[string](ignoreFile)
 					if err != nil {
-						fmt.Println("[ERROR]: failed to make ignore list!\n", err)
+						fmt.Println("[ERROR]: failed to make ignore listMap! without ignore flag\n", err)
 						return
 					}
+					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
+					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 				}
 			}
 
 			if extSpecified {
-				if len(ignoreList) == 0 {
-					ignoreList, err = pathHandler.MakeIgnoreList[[]string](exts)
+				if len(ignoreListMap["file"]) == 0 && len(ignoreListMap["dir"]) == 0 {
+					temp, err := pathHandler.MakeIgnoreList[[]string](exts)
 					if err != nil {
-						fmt.Println("[ERROR]: failed to make ignore list! with ext flag\n", err)
+						fmt.Println("[ERROR]: failed to make ignore listMap! with ext flag\n", err)
 						return
 					}
+					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
+					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 				} else {
 					temp, err := pathHandler.MakeIgnoreList[[]string](exts)
 					if err != nil {
 						fmt.Println("[ERROR]: failed to make ignore list! with ext flag\n", err)
 						return
 					}
-					ignoreList = append(ignoreList, temp...)
+					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
+					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 				}
 			}
 
 			// search and apply ignorefile or ignore flag
-			files, err := pathHandler.Search(inputPath, ignoreList)
+			files, err := pathHandler.Search(inputPath, ignoreListMap)
 			if err != nil {
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return
 			}
 
 			fmt.Println(exts)
+			fmt.Println("-----searchfiles-----")
 			for _, file := range files {
 				fmt.Println(file)
 			}
-			for _, i := range ignoreList {
+			fmt.Println("-----ignoreFile-----")
+			for _, i := range ignoreListMap["file"] {
+				fmt.Println(i)
+			}
+			fmt.Println("-----ignoreDir-----")
+			for _, i := range ignoreListMap["dir"] {
 				fmt.Println(i)
 			}
 

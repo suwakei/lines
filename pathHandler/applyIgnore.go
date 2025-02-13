@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"bufio"
 	"strings"
+	fp "path/filepath"
 )
 
-func MakeIgnoreList[eOri string | []string] (ignores eOri) ([]string, error) {
-	var ignoreList []string
-	ignoreList = append(ignoreList, "*.exe", "*.com", "*.dll", "*.so", "*.dylib", "*.xls", "*.xlsx", "*.pdf", "*.doc", "*.docx", "*.ppt", "*.pptx")
+func MakeIgnoreList[eOri string | []string] (ignores eOri) (map[string][]string, error) {
+	var ignoreListMap map[string][]string = make(map[string][]string, 2)
+
 	if ignoreFilePath, ok := any(ignores).(string); ok{
 		if ignoreFilePath != ".gitignore" {
 			abs, _ := Parse(ignoreFilePath)
@@ -37,9 +38,13 @@ func MakeIgnoreList[eOri string | []string] (ignores eOri) ([]string, error) {
 			} else if scanner.Text() == "" {
 				continue
 			}
-			ignoreList = append(ignoreList, scanner.Text())
+			if IsFile(scanner.Text()) {
+				ignoreListMap["file"] = append(ignoreListMap["file"], scanner.Text())
+			} else {
+				ignoreListMap["dir"] = append(ignoreListMap["dir"], scanner.Text())
+			}
 		}
-		return ignoreList, nil
+		return ignoreListMap, nil
 	} else {
 		ignoreSlice, ok := any(ignores).([]string)
 		if !ok {
@@ -48,7 +53,22 @@ func MakeIgnoreList[eOri string | []string] (ignores eOri) ([]string, error) {
 		if len(ignoreSlice) == 0 {
 			return nil, fmt.Errorf("[ERROR]: no extension specified")
 		}
-		ignoreList = append(ignoreList, ignoreSlice...)
-		return ignoreList, nil
+		for _, ignore := range ignoreSlice {
+			i := fp.Base(ignore)
+			if IsFile(ignore) {
+				ignoreListMap["file"] = append(ignoreListMap["file"], i)
+			} else {
+				ignoreListMap["dir"] = append(ignoreListMap["dir"], i)
+			}
 		}
+		return ignoreListMap, nil
 	}
+}
+
+func IsFile(path string) bool {
+    info, err := os.Stat(path)
+    if err != nil {
+        return false
+    }
+    return !info.IsDir()
+}
