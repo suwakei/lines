@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"bufio"
 	"strings"
-	fp "path/filepath"
 )
 
 func MakeIgnoreList[eOri string | []string] (ignores eOri) (map[string][]string, error) {
@@ -54,11 +53,14 @@ func MakeIgnoreList[eOri string | []string] (ignores eOri) (map[string][]string,
 			return nil, fmt.Errorf("[ERROR]: no extension specified")
 		}
 		for _, ignore := range ignoreSlice {
-			i := fp.Base(ignore)
-			if IsFile(ignore) {
-				ignoreListMap["file"] = append(ignoreListMap["file"], i)
+			i, err := Parse(ignore)
+			if err != nil {
+				return nil, err
+			}
+			if IsFile(i) {
+				ignoreListMap["file"] = append(ignoreListMap["file"], ignore)
 			} else {
-				ignoreListMap["dir"] = append(ignoreListMap["dir"], i)
+				ignoreListMap["dir"] = append(ignoreListMap["dir"], ignore)
 			}
 		}
 		return ignoreListMap, nil

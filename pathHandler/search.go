@@ -40,7 +40,3 @@ func contains(ignores []string, path string) bool {
 	return slices.Contains(ignores, fp.Base(path))
 }
 
-func containsExt(ignores []string, path string) bool {
-	return slices.Contains(ignores, fp.Ext(path))
-}
-

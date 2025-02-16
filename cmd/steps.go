@@ -3,12 +3,11 @@ package cmd
 import (
 	"os"
 	"fmt"
+	"sync"
 
 	"github.com/spf13/cobra"
 	"github.com/suwakei/steps/pathHandler"
-
-
-
+	cnter "github.com/suwakei/steps/counter"
 )
 
 const VERSION string = "0.1.0"
@@ -45,16 +44,19 @@ var (
 
 			var ignoreListMap map[string][]string = make(map[string][]string, 2)
 			ignoreListMap["file"] = append(ignoreListMap["file"], "*.exe", "*.com", "*.dll", "*.so", "*.dylib", "*.xls", "*.xlsx", "*.pdf", "*.doc", "*.docx", "*.ppt", "*.pptx")
+
 			if ignoreSpecified {
 				if ignoreFile == "" {
 					ignoreFile = ".gitignore"
 					temp, err := pathHandler.MakeIgnoreList[string](ignoreFile)
 					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
 					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
+	
 					if err != nil {
 						fmt.Println("[ERROR]: failed to make ignore listMap! with ignore flag\n", err)
 						return
 					}
+
 				} else {
 					temp, err := pathHandler.MakeIgnoreList[string](ignoreFile)
 					if err != nil {
@@ -73,8 +75,10 @@ var (
 						fmt.Println("[ERROR]: failed to make ignore listMap! with ext flag\n", err)
 						return
 					}
+
 					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
 					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
+
 				} else {
 					temp, err := pathHandler.MakeIgnoreList[[]string](exts)
 					if err != nil {
@@ -85,12 +89,46 @@ var (
 					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 				}
 			}
-
-			// search and apply ignorefile or ignore flag
+			// search and apply ignorefile or ext flag
 			files, err := pathHandler.Search(inputPath, ignoreListMap)
 			if err != nil {
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return
+			}
+
+
+			var result []cnter.CntResult
+			lenFiles := len(files)
+			if lenFiles >= 6 {
+				var (
+					aaa []string
+					bbb []string
+					ccc []string
+					wg sync.WaitGroup
+				)
+				alen := (lenFiles+2) / 3
+				blen := (lenFiles+1) / 3
+				clen := (lenFiles) / 3
+
+				aaa = make([]string, 0, alen)
+				bbb = make([]string, 0, blen)
+				ccc = make([]string, 0, clen)
+
+				aaa = append(aaa, files[0:alen-1]...)
+				bbb = append(bbb, files[alen:alen+blen-1]...)
+				ccc = append(ccc, files[alen+blen:lenFiles-1]...)
+
+			} else {
+				for _, file := range files {
+					r, err := cnter.Count(file)
+					if err != nil {
+						fmt.Println("[ERROR]: failed to culc line!\n", err)
+						return
+					}
+					result = append(result, r)
+				}
+
+				fmt.Println(result)
 			}
 
 			fmt.Println(exts)
@@ -125,7 +163,8 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolP("version", "v", false, "Print version of this app")
-	rootCmd.Flags().StringP("output", "o", "", "input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt]")
+	rootCmd.Flags().StringP("dist", "d", "", "input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt]")
+	rootCmd.Flags().StringP("only", "o", "", "By specifying an extension or file name, only files with that extension or name are targeted. \"-o=*.go\" or \"-o *.go\" or \"-o=test.txt\"")
 	rootCmd.Flags().StringP("ignore", "i", "", "input your .gitignore file path. ignore extentions in .gitignore file. (default: .gitignore)")
 	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=test.json, *.js, *.go\" or \"-e=test.json -e=*.js -e=*.go\". (default: *.exe, *.com, *.dll, *.so, *.dylib, *.xls, *.xlsx, *.pdf, *.doc, *.docx, *.ppt, *.pptx)")
 }
