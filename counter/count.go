@@ -137,7 +137,10 @@ func isSingleComment(line string) bool {
 	strings.HasPrefix(line, "%") ||
 	strings.HasPrefix(line, ";") ||
 	strings.HasPrefix(line, "#;") ||
-	strings.HasPrefix(line, "⍝")
+	strings.HasPrefix(line, "⍝") ||
+strings.HasPrefix(line, "rem ") ||
+strings.HasPrefix(line, "::") ||
+strings.HasPrefix(line, ":  ") ||
 }
 
 func isBeginBlockComments(line string) bool {
@@ -148,17 +151,21 @@ func isBeginBlockComments(line string) bool {
 	strings.HasPrefix(line, "/**") ||
 	strings.HasPrefix(line, "--") ||
 	strings.HasPrefix(line, "<!--") ||
+strings.HasPrefix(line, "<%--") ||
 	strings.HasPrefix(line, "////") ||
 	strings.HasPrefix(line, "/+") ||
 	strings.HasPrefix(line, "/++") ||
 	strings.HasPrefix(line, "(*") ||
 	strings.HasPrefix(line, "{-") ||
 	strings.HasPrefix(line, "\"\"\"") ||
+strings.HasPrefix(line, "'''") ||
 	strings.HasPrefix(line, "#=") ||
 	strings.HasPrefix(line, "--[[") ||
 	strings.HasPrefix(line, "%{") ||
 	strings.HasPrefix(line, "#[") ||
 	strings.HasPrefix(line, "=pod") ||
+strings.HasPrefix(line, "=comment") ||
+strings.HasPrefix(line, "=begin") ||
 	strings.HasPrefix(line, "<#") ||
 	strings.HasPrefix(line, "#|")
 }
@@ -167,6 +174,7 @@ func isEndBlockComments(line string) bool {
 	return strings.HasSuffix(line, "*/") ||
 	strings.HasSuffix(line, "**/") ||
 	strings.HasSuffix(line, "-->") ||
+strings.HasSuffix(line, "--%>") ||
 	strings.HasSuffix(line, "--") ||
 	strings.HasSuffix(line, "+/") ||
 	strings.HasSuffix(line, "*)") ||
@@ -174,10 +182,12 @@ func isEndBlockComments(line string) bool {
 	strings.HasSuffix(line, "%}") ||
 	strings.HasSuffix(line, "=#") ||
 	strings.HasSuffix(line, "=cut") ||
+strings.HasPrefix(line, "=end") ||
 	strings.HasSuffix(line, "--]]") ||
 	strings.HasSuffix(line, "]#") ||
 	strings.HasSuffix(line, "*)") ||
 	strings.HasSuffix(line, "#>") ||
 	strings.HasSuffix(line, "\"\"\"") ||
+strings.HasPrefix(line, "'''") ||
 	strings.HasSuffix(line, "|#")
 }
