@@ -133,6 +133,7 @@ func isSingleComment(line string) bool {
 	return strings.HasPrefix(line, "//") ||
 	strings.HasPrefix(line, "///") ||
 	strings.HasPrefix(line, "#") ||
+strings.HasPrefix(line, "!") ||
 	strings.HasPrefix(line, "--") ||
 	strings.HasPrefix(line, "%") ||
 	strings.HasPrefix(line, ";") ||
@@ -141,6 +142,7 @@ func isSingleComment(line string) bool {
 strings.HasPrefix(line, "rem ") ||
 strings.HasPrefix(line, "::") ||
 strings.HasPrefix(line, ":  ") ||
+strings.HasPrefix(line, "'") ||
 }
 
 func isBeginBlockComments(line string) bool {
