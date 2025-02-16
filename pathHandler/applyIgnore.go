@@ -15,6 +15,7 @@ func MakeIgnoreList[eOri string | []string] (ignores eOri) (map[string][]string,
 			abs, _ := Parse(ignoreFilePath)
 			return nil, fmt.Errorf("[INFO]: ignore file must be .gitignore\n not exist %s", abs)
 		}
+
 		p, err := Parse(ignoreFilePath)
 		if err != nil {
 			return nil, err

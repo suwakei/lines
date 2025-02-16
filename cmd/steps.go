@@ -3,11 +3,9 @@ package cmd
 import (
 	"os"
 	"fmt"
-	"sync"
 
 	"github.com/spf13/cobra"
 	"github.com/suwakei/steps/pathHandler"
-	cnter "github.com/suwakei/steps/counter"
 )
 
 const VERSION string = "0.1.0"
@@ -94,41 +92,6 @@ var (
 			if err != nil {
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return
-			}
-
-
-			var result []cnter.CntResult
-			lenFiles := len(files)
-			if lenFiles >= 6 {
-				var (
-					aaa []string
-					bbb []string
-					ccc []string
-					wg sync.WaitGroup
-				)
-				alen := (lenFiles+2) / 3
-				blen := (lenFiles+1) / 3
-				clen := (lenFiles) / 3
-
-				aaa = make([]string, 0, alen)
-				bbb = make([]string, 0, blen)
-				ccc = make([]string, 0, clen)
-
-				aaa = append(aaa, files[0:alen-1]...)
-				bbb = append(bbb, files[alen:alen+blen-1]...)
-				ccc = append(ccc, files[alen+blen:lenFiles-1]...)
-
-			} else {
-				for _, file := range files {
-					r, err := cnter.Count(file)
-					if err != nil {
-						fmt.Println("[ERROR]: failed to culc line!\n", err)
-						return
-					}
-					result = append(result, r)
-				}
-
-				fmt.Println(result)
 			}
 
 			fmt.Println(exts)
