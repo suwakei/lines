@@ -28,6 +28,7 @@ func Count(files []string) ([]CntResult, error) {
 			wg sync.WaitGroup
 			mu sync.Mutex
 		)
+出力にHTML追加しても良い
 
 		alen := (lenFiles+2) / 3
 		blen := (lenFiles+1) / 3
