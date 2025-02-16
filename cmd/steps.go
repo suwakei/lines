@@ -126,7 +126,7 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolP("version", "v", false, "Print version of this app")
-	rootCmd.Flags().StringP("dist", "d", "", "input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt]")
+	rootCmd.Flags().StringP("dist", "d", "", "input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt] or \"localhost\" is output result on your Browser")
 	rootCmd.Flags().StringP("only", "o", "", "By specifying an extension or file name, only files with that extension or name are targeted. \"-o=*.go\" or \"-o *.go\" or \"-o=test.txt\"")
 	rootCmd.Flags().StringP("ignore", "i", "", "input your .gitignore file path. ignore extentions in .gitignore file. (default: .gitignore)")
 	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=test.json, *.js, *.go\" or \"-e=test.json -e=*.js -e=*.go\". (default: *.exe, *.com, *.dll, *.so, *.dylib, *.xls, *.xlsx, *.pdf, *.doc, *.docx, *.ppt, *.pptx)")
