@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"os"
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/suwakei/steps/pathHandler"
@@ -23,78 +23,56 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			if version, _ := cmd.Flags().GetBool("version"); version {
 				fmt.Println(VERSION)
-				return 
-		}
+				return
+			}
 
-		if len(args) > 0 {
+			if len(args) == 0 {
+				fmt.Println("[ERROR]: no path input!")
+				return
+			}
+
 			inputPath, err := pathHandler.Parse(args[0])
 			if err != nil {
 				fmt.Println("[ERROR]: failed to parse input path!\n", err)
 				return
 			}
 
-			//outputPath, _ := cmd.Flags().GetString("output")
 			ignoreFile, _ := cmd.Flags().GetString("ignore")
 			exts, _ := cmd.Flags().GetStringSlice("ext")
 
-			ignoreSpecified := cmd.Flags().Changed("ignore")
-			extSpecified := cmd.Flags().Changed("ext")
+			ignoreListMap := map[string][]string{
+				"file": {"*.exe", "*.com", "*.dll", "*.so", "*.dylib", "*.xls", "*.xlsx", "*.pdf", "*.doc", "*.docx", "*.ppt", "*.pptx"},
+			}
 
-			var ignoreListMap map[string][]string = make(map[string][]string, 2)
-			ignoreListMap["file"] = append(ignoreListMap["file"], "*.exe", "*.com", "*.dll", "*.so", "*.dylib", "*.xls", "*.xlsx", "*.pdf", "*.doc", "*.docx", "*.ppt", "*.pptx")
-
-			if ignoreSpecified {
+			if cmd.Flags().Changed("ignore") {
 				if ignoreFile == "" {
 					ignoreFile = ".gitignore"
-					temp, err := pathHandler.MakeIgnoreList[string](ignoreFile)
-					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
-					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
-	
-					if err != nil {
-						fmt.Println("[ERROR]: failed to make ignore listMap! with ignore flag\n", err)
-						return
-					}
-
-				} else {
-					temp, err := pathHandler.MakeIgnoreList[string](ignoreFile)
-					if err != nil {
-						fmt.Println("[ERROR]: failed to make ignore listMap! without ignore flag\n", err)
-						return
-					}
-					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
-					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 				}
+				temp, err := pathHandler.MakeIgnoreList[string](ignoreFile)
+				if err != nil {
+					fmt.Println("[ERROR]: failed to make ignore listMap!\n", err)
+					return
+				}
+				ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
+				ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 			}
 
-			if extSpecified {
-				if len(ignoreListMap["file"]) == 0 && len(ignoreListMap["dir"]) == 0 {
-					temp, err := pathHandler.MakeIgnoreList[[]string](exts)
-					if err != nil {
-						fmt.Println("[ERROR]: failed to make ignore listMap! with ext flag\n", err)
-						return
-					}
-
-					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
-					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
-
-				} else {
-					temp, err := pathHandler.MakeIgnoreList[[]string](exts)
-					if err != nil {
-						fmt.Println("[ERROR]: failed to make ignore list! with ext flag\n", err)
-						return
-					}
-					ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
-					ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
+			if cmd.Flags().Changed("ext") {
+				temp, err := pathHandler.MakeIgnoreList[[]string](exts)
+				if err != nil {
+					fmt.Println("[ERROR]: failed to make ignore listMap!\n", err)
+					return
 				}
+				ignoreListMap["file"] = append(ignoreListMap["file"], temp["file"]...)
+				ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 			}
-			// search and apply ignorefile or ext flag
+
 			files, err := pathHandler.Search(inputPath, ignoreListMap)
 			if err != nil {
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return
 			}
 
-			fmt.Println(exts)
 			fmt.Println("-----searchfiles-----")
 			for _, file := range files {
 				fmt.Println(file)
@@ -107,18 +85,12 @@ var (
 			for _, i := range ignoreListMap["dir"] {
 				fmt.Println(i)
 			}
-
-		} else if len(args) == 0 {
-			fmt.Println("[ERROR]: no path input!")
-			return
-		}
 		},
 	}
 )
 
 func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		fmt.Println("[ERROR]:", err)
 		os.Exit(1)
 	}
@@ -131,6 +103,4 @@ func init() {
 	rootCmd.Flags().StringP("ignore", "i", "", "input your .gitignore file path. ignore extentions in .gitignore file. (default: .gitignore)")
 	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=test.json, *.js, *.go\" or \"-e=test.json -e=*.js -e=*.go\". (default: *.exe, *.com, *.dll, *.so, *.dylib, *.xls, *.xlsx, *.pdf, *.doc, *.docx, *.ppt, *.pptx)")
 }
-
-
 
