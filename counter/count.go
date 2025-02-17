@@ -185,23 +185,36 @@ func isBeginBlockComments(line string) bool {
 }
 
 func isEndBlockComments(line string) bool {
-	return strings.HasSuffix(line, "*/") ||
-	strings.HasSuffix(line, "**/") ||
-	strings.HasSuffix(line, "-->") ||
-strings.HasSuffix(line, "--%>") ||
-	strings.HasSuffix(line, "--") ||
-	strings.HasSuffix(line, "+/") ||
-	strings.HasSuffix(line, "*)") ||
-	strings.HasSuffix(line, "-}") ||
-	strings.HasSuffix(line, "%}") ||
-	strings.HasSuffix(line, "=#") ||
-	strings.HasSuffix(line, "=cut") ||
-strings.HasPrefix(line, "=end") ||
-	strings.HasSuffix(line, "--]]") ||
-	strings.HasSuffix(line, "]#") ||
-	strings.HasSuffix(line, "*)") ||
-	strings.HasSuffix(line, "#>") ||
-	strings.HasSuffix(line, "\"\"\"") ||
-strings.HasPrefix(line, "'''") ||
-	strings.HasSuffix(line, "|#")
+    if len(line) == 0 {
+        return false
+    }
+
+    commentSuffixes := []string{
+        "*/", 
+"**/",
+"-->",
+"--%>",
+"--",
+"+/",
+"*)",
+"-}",
+"%}",
+"=#",
+"=cut",
+"=end",
+"--]]",
+"]#",
+"#>",
+"\"\"\"",
+"'''",
+"|#",
+    }
+
+    for _, suffix := range commentSuffixes {
+        if strings.HasSuffix(line, suffix) {
+            return true
+        }
+    }
+
+    return false
 }
