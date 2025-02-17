@@ -1,0 +1,160 @@
+name: build-test-lint-SJRW
+
+on:
+  push:
+    branches: [ main ]
+    paths: ['**/*.go', '.github/workflows/*.yml', '**/*.toml'] # goファイル, ymlファイル変更時のみ
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  SLACK_USERNAME: ci failure notification
+  SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        go-versions: [1.23.0]
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{matrix.go-versions}}
+
+      - name: Go Build
+        run: go build -v ./...
+
+      - name: Slack Failure Notification on Build
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ failure() }}
+        env:
+          SLACK_TITLE: sjrw commit name "${{github.event.head_commit.message}}"
+          SLACK_COLOR: danger
+          SLACK_MESSAGE: sjrw build failed!!!
+
+  test:
+    needs: build
+
+    strategy:
+      matrix:
+        go-versions: [1.23.0]
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{matrix.go-versions}}
+
+      - name: Go Test
+        run: go test -v .
+
+      - name: Go Benchmark
+        run:  go test -bench . -benchmem
+
+      - name: Slack Failure Notification test 
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ failure() }}
+        env:
+            SLACK_TITLE: sjrw commit name "${{github.event.head_commit.message}}"
+            SLACK_COLOR: danger
+            SLACK_MESSAGE: sjrw test failed!!!
+
+  benchmark:
+    needs: build
+
+    strategy:
+      matrix:
+        go-versions: [1.23.0]
+        os: [ubuntu-latest]
+    runs-on: ${{matrix.os}}
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{matrix.go-versions}}
+
+      - name: Go Benchmark
+        run:  go test -bench . -benchmem
+
+      - name: Slack Failure Notification benchmark
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ failure() }}
+        env:
+            SLACK_TITLE: sjrw commit name "${{github.event.head_commit.message}}"
+            SLACK_COLOR: danger
+            SLACK_MESSAGE: sjrw benchmark failed!!
+
+  lint:
+    needs: test
+
+    strategy:
+      matrix:
+        go-versions: [1.23.0]
+        os: [ubuntu-latest]
+
+    permissions:
+      checks: write
+      contents: read
+
+    timeout-minutes: 5
+
+    runs-on: ${{matrix.os}}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{matrix.go-versions}}
+
+      - name: Go lint with reviewdog
+        uses: reviewdog/action-golangci-lint@v2
+        with:
+          go_version: ${{matrix.go-versions}}
+
+          # reviewdog の動作モードの指定
+          reporter: github-check
+
+          github_token: ${{github.token}}
+
+          filter_mode: nofilter
+
+          #このファイルパスにgolangciの設定ymlファイルをおく
+          golangci_lint_flags: "--config=.github/.golangci.toml"
+
+          # Github Status へのレポートレベルの指定
+          level: warning
+
+
+      - name: Slack Failure Notification on Lint
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ failure() }}
+        env:
+          SLACK_TITLE: sjrw commit name "${{github.event.head_commit.message}}"
+          SLACK_COLOR: danger
+          SLACK_MESSAGE: sjrw lint failed!!!

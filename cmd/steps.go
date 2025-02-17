@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/suwakei/steps/counter"
 	"github.com/suwakei/steps/pathHandler"
 )
 
@@ -41,7 +42,7 @@ var (
 			exts, _ := cmd.Flags().GetStringSlice("ext")
 
 			ignoreListMap := map[string][]string{
-				"file": {"*.exe", "*.com", "*.dll", "*.so", "*.dylib", "*.xls", "*.xlsx", "*.pdf", "*.doc", "*.docx", "*.ppt", "*.pptx"},
+				"file": {"*.exe", "*.com", "*.dll", "*.so", "*.dylib", "*.xls", "*.xlsx", "*.pdf", "*.doc", "*.docx", "*.ppt", "*.pptx", "*.png", "*.jpg", "*.jpeg", "*."},
 			}
 
 			if cmd.Flags().Changed("ignore") {
@@ -85,6 +86,9 @@ var (
 			for _, i := range ignoreListMap["dir"] {
 				fmt.Println(i)
 			}
+
+			fmt.Println("result")
+			fmt.Println(counter.Count(files))
 		},
 	}
 )
@@ -103,4 +107,3 @@ func init() {
 	rootCmd.Flags().StringP("ignore", "i", "", "input your .gitignore file path. ignore extentions in .gitignore file. (default: .gitignore)")
 	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=test.json, *.js, *.go\" or \"-e=test.json -e=*.js -e=*.go\". (default: *.exe, *.com, *.dll, *.so, *.dylib, *.xls, *.xlsx, *.pdf, *.doc, *.docx, *.ppt, *.pptx)")
 }
-

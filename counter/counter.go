@@ -38,9 +38,9 @@ func Count(files []string) ([]CntResult, error) {
 		bbb = make([]string, 0, blen)
 		ccc = make([]string, 0, clen)
 
-		aaa = append(aaa, files[0:alen-1]...)
-		bbb = append(bbb, files[alen:alen+blen-1]...)
-		ccc = append(ccc, files[alen+blen:lenFiles-1]...)
+		aaa = append(aaa, files[0:alen]...)
+		bbb = append(bbb, files[alen:alen+blen]...)
+		ccc = append(ccc, files[alen+blen:lenFiles]...)
 
 		wg.Add(3)
 		processFiles := func(files []string) {
@@ -80,8 +80,8 @@ func count(file string) (CntResult, error) {
 		return CntResult{}, err
 	}
 	defer p.Close()
-	result.Filetype = fp.Ext(file)
-
+	
+	result.Filetype = retFileType(file)
 
 	scanner := bufio.NewScanner(p)
 	const maxCapacity = 1024 * 1024
@@ -126,30 +126,34 @@ func count(file string) (CntResult, error) {
 	return result, nil
 }
 
+// Efficiency of searching comment prefixes from O(n) to O(1)
+var singleCommentPrefixes map[string]struct{} = map[string]struct{}{
+	"//": {},
+	"///": {},
+	"#": {},
+	"!": {},
+	"--": {},
+	"%": {},
+	";": {},
+	"#;": {},
+	"⍝": {},
+	"rem ": {},
+	"::": {},
+	":  ": {},
+	"'": {},
+}
+
 
 func isSingleComment(line string) bool {
-    if len(line) == 0 {
+	lineLen := len(line)
+    if lineLen == 0 {
         return false
     }
 
-    commentPrefixes := []string{
-        "//",
-"///",
-"#",
-"!",
-"--",
-"%",
-";",
-"#;",
-"⍝",
-"rem ",
-"::",
-":  ",
-"'",
-    }
-
-    for _, prefix := range commentPrefixes {
-        if strings.HasPrefix(line, prefix) {
+	// conpare prefix to line
+    for prefix := range singleCommentPrefixes {
+		prefLen := len(prefix)
+        if lineLen >= prefLen && line[:prefLen] == prefix {
             return true
         }
     }
@@ -157,42 +161,68 @@ func isSingleComment(line string) bool {
     return false
 }
 
+
+var blockCommentPrefixes map[string]struct{} = map[string]struct{}{
+	"/*": {},
+	"/**": {},
+	"--": {},
+	"<!--": {},
+	"<%--": {},
+	"////": {},
+	"/+": {},
+	"/++": {},
+	"(*": {},
+	"{-": {},
+	"\"\"\"": {},
+	"'''": {},
+	"#=": {},
+	"--[[": {},
+	"%{": {},
+	"#[": {},
+	"=pod": {},
+	"=comment": {},
+	"=begin": {},
+	"<#": {},
+	"#|": {},
+}
+
 func isBeginBlockComments(line string) bool {
-    if len(line) == 0 {
+	lineLen := len(line)
+
+    if lineLen == 0 {
         return false
     }
 
-    commentPrefixes := []string{
-        "/*",
-"/**",
-"--",
-"<!--",
-"<%--",
-"////",
-"/+",
-"/++",
-"(*",
-"{-",
-"\"\"\"",
-"'''",
-"#=",
-"--[[",
-"%{",
-"#[",
-"=pod",
-"=comment",
-"=begin",
-"<#",
-"#|",
-    }
-
-    for _, prefix := range commentPrefixes {
-        if strings.HasPrefix(line, prefix) {
+    for prefix := range blockCommentPrefixes {
+		prefLen := len(prefix)
+        if lineLen >= prefLen && line[:prefLen] == prefix {
             return true
         }
     }
 
     return false
+}
+
+
+var blockCommentSuffixes map[string]struct{} = map[string]struct{}{
+	"*/": {}, 
+	"**/": {},
+	"-->": {},
+	"--%>": {},
+	"--": {},
+	"+/": {},
+	"*)": {},
+	"-}": {},
+	"%}": {},
+	"=#": {},
+	"=cut": {},
+	"=end": {},
+	"--]]": {},
+	"]#": {},
+	"#>": {},
+	"\"\"\"": {},
+	"'''": {},
+	"|#": {},
 }
 
 func isEndBlockComments(line string) bool {
@@ -200,32 +230,22 @@ func isEndBlockComments(line string) bool {
         return false
     }
 
-    commentSuffixes := []string{
-        "*/", 
-"**/",
-"-->",
-"--%>",
-"--",
-"+/",
-"*)",
-"-}",
-"%}",
-"=#",
-"=cut",
-"=end",
-"--]]",
-"]#",
-"#>",
-"\"\"\"",
-"'''",
-"|#",
+	// confirm suffix directly
+    _, exists := blockCommentSuffixes[line[len(line)-2:]] // confirm last two chars
+    if exists {
+        return exists
     }
 
-    for _, suffix := range commentSuffixes {
-        if strings.HasSuffix(line, suffix) {
-            return true
-        }
-    }
+	_, exists = blockCommentSuffixes[line[len(line)-3:]] // confirm last three chars
+    return exists
+}
 
-    return false
+func retFileType(file string) string {
+	if fp.Ext(file) == "" {
+		b := fp.Base(file)
+		return b
+	} else {
+		return fp.Ext(file)
+	}
+
 }
