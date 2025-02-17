@@ -8,15 +8,16 @@ import (
 )
 
 func MakeIgnoreList[eOri string | []string] (ignores eOri) (map[string][]string, error) {
-	var ignoreListMap map[string][]string = make(map[string][]string, 2)
+	ignoreListMap := make(map[string][]string, 2)
 
-	if ignoreFilePath, ok := any(ignores).(string); ok{
-		if ignoreFilePath != ".gitignore" {
-			abs, _ := Parse(ignoreFilePath)
+	switch v := any(ignores).(type) {
+	case string:
+		if v != ".gitignore" {
+			abs, _ := Parse(v)
 			return nil, fmt.Errorf("[INFO]: ignore file must be .gitignore\n not exist %s", abs)
 		}
 
-		p, err := Parse(ignoreFilePath)
+		p, err := Parse(v)
 		if err != nil {
 			return nil, err
 		}
@@ -29,31 +30,30 @@ func MakeIgnoreList[eOri string | []string] (ignores eOri) (map[string][]string,
 		if err != nil {
 			return nil, err
 		}
-
 		defer f.Close()
+
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
-			if strings.HasPrefix(scanner.Text(), "#") {
-				continue
-			} else if scanner.Text() == "" {
+			line := scanner.Text()
+			if strings.HasPrefix(line, "#") || line == "" {
 				continue
 			}
-			if IsFile(scanner.Text()) {
-				ignoreListMap["file"] = append(ignoreListMap["file"], scanner.Text())
+			if IsFile(line) {
+				ignoreListMap["file"] = append(ignoreListMap["file"], line)
 			} else {
-				ignoreListMap["dir"] = append(ignoreListMap["dir"], scanner.Text())
+				ignoreListMap["dir"] = append(ignoreListMap["dir"], line)
 			}
+		}
+		if err := scanner.Err(); err != nil {
+			return nil, err
 		}
 		return ignoreListMap, nil
-	} else {
-		ignoreSlice, ok := any(ignores).([]string)
-		if !ok {
-			return nil, fmt.Errorf("[ERROR]: type of ignores is not []string")
-		}
-		if len(ignoreSlice) == 0 {
+
+	case []string:
+		if len(v) == 0 {
 			return nil, fmt.Errorf("[ERROR]: no extension specified")
 		}
-		for _, ignore := range ignoreSlice {
+		for _, ignore := range v {
 			i, err := Parse(ignore)
 			if err != nil {
 				return nil, err
@@ -65,13 +65,16 @@ func MakeIgnoreList[eOri string | []string] (ignores eOri) (map[string][]string,
 			}
 		}
 		return ignoreListMap, nil
+
+	default:
+		return nil, fmt.Errorf("[ERROR]: type of ignores is not valid")
 	}
 }
 
 func IsFile(path string) bool {
-    info, err := os.Stat(path)
-    if err != nil {
-        return false
-    }
-    return !info.IsDir()
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return !info.IsDir()
 }
