@@ -1,3 +1,22 @@
+name: lint
+
+on:
+  push:
+    branches: [ main ]
+    paths: ['**/*.go', '.github/workflows/*.yml', '**/*.toml'] # goファイル, ymlファイル変更時のみ
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  SLACK_USERNAME: ci failure notification
+  SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+
+
 lint:
     strategy:
       matrix:
