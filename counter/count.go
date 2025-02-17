@@ -147,30 +147,41 @@ strings.HasPrefix(line, "'") ||
 }
 
 func isBeginBlockComments(line string) bool {
-	if len(line) == 0 {
-		return false
-	}
-	return strings.HasPrefix(line, "/*") ||
-	strings.HasPrefix(line, "/**") ||
-	strings.HasPrefix(line, "--") ||
-	strings.HasPrefix(line, "<!--") ||
-strings.HasPrefix(line, "<%--") ||
-	strings.HasPrefix(line, "////") ||
-	strings.HasPrefix(line, "/+") ||
-	strings.HasPrefix(line, "/++") ||
-	strings.HasPrefix(line, "(*") ||
-	strings.HasPrefix(line, "{-") ||
-	strings.HasPrefix(line, "\"\"\"") ||
-strings.HasPrefix(line, "'''") ||
-	strings.HasPrefix(line, "#=") ||
-	strings.HasPrefix(line, "--[[") ||
-	strings.HasPrefix(line, "%{") ||
-	strings.HasPrefix(line, "#[") ||
-	strings.HasPrefix(line, "=pod") ||
-strings.HasPrefix(line, "=comment") ||
-strings.HasPrefix(line, "=begin") ||
-	strings.HasPrefix(line, "<#") ||
-	strings.HasPrefix(line, "#|")
+    if len(line) == 0 {
+        return false
+    }
+
+    commentPrefixes := []string{
+        "/*",
+"/**",
+"--",
+"<!--",
+"<%--",
+"////",
+"/+",
+"/++",
+"(*",
+"{-",
+"\"\"\"",
+"'''",
+"#=",
+"--[[",
+"%{",
+"#[",
+"=pod",
+"=comment",
+"=begin",
+"<#",
+"#|",
+    }
+
+    for _, prefix := range commentPrefixes {
+        if strings.HasPrefix(line, prefix) {
+            return true
+        }
+    }
+
+    return false
 }
 
 func isEndBlockComments(line string) bool {
