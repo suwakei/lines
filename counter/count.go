@@ -28,7 +28,7 @@ func Count(files []string) ([]CntResult, error) {
 			wg sync.WaitGroup
 			mu sync.Mutex
 		)
-出力にHTML追加しても良い
+
 
 		alen := (lenFiles+2) / 3
 		blen := (lenFiles+1) / 3
@@ -128,22 +128,33 @@ func count(file string) (CntResult, error) {
 
 
 func isSingleComment(line string) bool {
-	if len(line) == 0 {
-		return false
-	}
-	return strings.HasPrefix(line, "//") ||
-	strings.HasPrefix(line, "///") ||
-	strings.HasPrefix(line, "#") ||
-strings.HasPrefix(line, "!") ||
-	strings.HasPrefix(line, "--") ||
-	strings.HasPrefix(line, "%") ||
-	strings.HasPrefix(line, ";") ||
-	strings.HasPrefix(line, "#;") ||
-	strings.HasPrefix(line, "⍝") ||
-strings.HasPrefix(line, "rem ") ||
-strings.HasPrefix(line, "::") ||
-strings.HasPrefix(line, ":  ") ||
-strings.HasPrefix(line, "'") ||
+    if len(line) == 0 {
+        return false
+    }
+
+    commentPrefixes := []string{
+        "//",
+"///",
+"#",
+"!",
+"--",
+"%",
+";",
+"#;",
+"⍝",
+"rem ",
+"::",
+":  ",
+"'",
+    }
+
+    for _, prefix := range commentPrefixes {
+        if strings.HasPrefix(line, prefix) {
+            return true
+        }
+    }
+
+    return false
 }
 
 func isBeginBlockComments(line string) bool {
