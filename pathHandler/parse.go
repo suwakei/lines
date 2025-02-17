@@ -8,14 +8,14 @@ import (
 
 
 func Parse(path string) (string, error) {
-	path, err := fp.Abs(path)
+	absPath, err := fp.Abs(path)
 	if err != nil {
 		return "", err
 	}
-	if !Exists(path) {
-		return "", fmt.Errorf("[INFO]: path does not exist \" %s \"", path)
+	if !Exists(absPath) {
+		return "", fmt.Errorf("[INFO]: path does not exist \" %s \"", absPath)
 	}
-	return fp.Clean(path), nil
+	return fp.Clean(absPath), nil
 }
 
 func Exists(path string) bool {
