@@ -17,6 +17,14 @@ type CntResult struct {
 	Bytes int
 }
 
+type AllCnt struct {
+    CntResult
+    AllSteps int
+    AllBlanks int
+    AllComments int
+    AllBytes int64
+}
+
 const concurrencyThreshold = 6
 
 func Count(files []string) ([]CntResult, error) {
