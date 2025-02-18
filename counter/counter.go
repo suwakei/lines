@@ -17,10 +17,12 @@ type CntResult struct {
 	Bytes int
 }
 
+const concurrencyThreshold = 6
+
 func Count(files []string) ([]CntResult, error) {
 	var results []CntResult
 	var lenFiles uint = uint(len(files))
-	if lenFiles >= 6 {
+	if lenFiles >= concurrencyThreshold {
 		var (
 			aaa []string
 			bbb []string
