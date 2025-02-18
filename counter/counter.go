@@ -18,7 +18,7 @@ type CntResult struct {
 }
 
 type AllCnt struct {
-    CntResult
+    []CntResult
     AllSteps int
     AllBlanks int
     AllComments int
@@ -27,7 +27,7 @@ type AllCnt struct {
 
 const concurrencyThreshold = 6
 
-func Count(files []string) ([]CntResult, error) {
+func Count(files []string) (AllCnt, error) {
 	var results []CntResult
 	var lenFiles uint = uint(len(files))
 	if lenFiles >= concurrencyThreshold {
