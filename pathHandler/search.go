@@ -10,10 +10,15 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 	var files []string
   ignoreSetDir map[string]struct{} = make(map[string]struct{}, len(ignores["dir"]))
 
+        for _, ignore := range ignores["dir"] {
+                ignoreSetDir[ignore] = struct{}{}
+        }
+
 ignoreSetFile map[string]struct{} = make(map[string]struct{}, len(ignores["file"]))
 
-
-
+for _, ignore := range ignores["file"] {
+                ignoreSetFile[ignore] = struct{}{}
+        }
 
 
 	parsedPath, err := Parse(path)
@@ -59,10 +64,7 @@ func contains(ignores []string, pathBaseName string) bool {
 	if ignores == nil {
 		return false
 	}
-	ignoreSet := make(map[string]struct{}, len(ignores))
-	for _, ignore := range ignores {
-		ignoreSet[ignore] = struct{}{}
-	}
+	
 	_, exist := ignoreSet[pathBaseName]
 	return exist
 }
