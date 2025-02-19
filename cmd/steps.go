@@ -42,7 +42,26 @@ var (
 			exts, _ := cmd.Flags().GetStringSlice("ext")
 
 			ignoreListMap := map[string][]string{
-				"file": {"*.exe", "*.com", "*.dll", "*.so", "*.dylib", "*.xls", "*.xlsx", "*.pdf", "*.doc", "*.docx", "*.ppt", "*.pptx", "*.png", "*.jpg", "*.jpeg", "*."},
+				"file": {"*.exe",
+				"*.com",
+				"*.dll",
+				"*.so",
+				"*.dylib",
+				"*.xls",
+				"*.xlsx",
+				"*.pdf",
+				"*.doc",
+				"*.docx",
+				"*.ppt",
+				"*.pptx",
+				"*.png",
+				"*.jpg",
+				"*.jpeg",
+				"*.svg",
+				"*.gif",
+				"*.bmp",
+				"*.tiff",
+				"*.webp"},
 			}
 
 			if cmd.Flags().Changed("ignore") {
@@ -87,7 +106,7 @@ var (
 				fmt.Println(i)
 			}
 
-			fmt.Println("result")
+			fmt.Println("-----result-----")
 			fmt.Println(counter.Count(files))
 		},
 	}

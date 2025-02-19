@@ -15,18 +15,25 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 	}
 
 	err = fp.WalkDir(parsedPath, func(path string, d fs.DirEntry, err error) error {
+		base := fp.Base(path)
 		if err != nil {
 			return err
 		}
 
 		if d.IsDir() {
-			if contains(ignores["dir"], path) {
+			if contains(ignores["dir"], base) {
 				return fp.SkipDir
 			}
 			return nil
 		}
 
-		if contains(ignores["file"], path) {
+		if !d.IsDir() {
+			if contains(ignores["file"], base) {
+				return nil
+			}
+		}
+
+		if isInvalidFile(base) {
 			return nil
 		}
 
@@ -41,6 +48,17 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 	return files, nil
 }
 
-func contains(ignores []string, path string) bool {
-	return slices.Contains(ignores, fp.Base(path))
+func contains(ignores []string, base string) bool {
+	return slices.Contains(ignores, base)
 }
+
+func isInvalidFile(base string) bool {
+	ext := fp.Ext(base)
+	if ext == "" {
+		if base != "Makefile" || base != "Dockerfile" {
+				return true
+			}
+	}
+	return false
+}
+

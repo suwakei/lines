@@ -2,14 +2,14 @@ package counter
 
 import (
 	"bufio"
-	"fmt"
+	"log"
 	"os"
+	fp "path/filepath"
 	"strings"
 	"sync"
-	fp "path/filepath"
 )
 
-type CntResult struct {
+type FileInfo struct {
 	Filetype string
 	Steps int
 	Blanks int
@@ -17,28 +17,34 @@ type CntResult struct {
 	Bytes int
 }
 
-type AllCnt struct {
-    []CntResult
+type CntResult struct {
+    info []FileInfo
     AllSteps int
     AllBlanks int
     AllComments int
     AllBytes int64
 }
 
-const concurrencyThreshold = 6
+const (
+	maxCapacity = 1024 * 1024
+	concurrencyThreshold = 6
+)
 
-func Count(files []string) (AllCnt, error) {
-	var results []CntResult
-	var lenFiles uint = uint(len(files))
+func Count(files []string) (CntResult, error) {
+	var(
+		result CntResult
+		bufMap map[string]*FileInfo = make(map[string]*FileInfo)
+		lenFiles uint = uint(len(files))
+		mu sync.Mutex
+		wg sync.WaitGroup
+	)
+
 	if lenFiles >= concurrencyThreshold {
 		var (
 			aaa []string
 			bbb []string
 			ccc []string
-			wg sync.WaitGroup
-			mu sync.Mutex
 		)
-
 
 		alen := (lenFiles+2) / 3
 		blen := (lenFiles+1) / 3
@@ -53,48 +59,36 @@ func Count(files []string) (AllCnt, error) {
 		ccc = append(ccc, files[alen+blen:lenFiles]...)
 
 		wg.Add(3)
-		processFiles := func(files []string) {
-			defer wg.Done()
-			for _, file := range files {
-				r, err := count(file)
-				if err != nil {
-					fmt.Printf("[ERROR]: failed to countLine! %q\n %q\n", file, err)
-					continue
-				}
-				mu.Lock()
-				results = append(results, r)
-				mu.Unlock()
-			}
-		}
-		go processFiles(aaa)
-		go processFiles(bbb)
-		go processFiles(ccc)
+		go processFiles(aaa, &wg, &mu, bufMap)
+		go processFiles(bbb, &wg, &mu, bufMap)
+		go processFiles(ccc, &wg, &mu, bufMap)
 		wg.Wait()
 	} else {
 		for _, file := range files {
-			r, err := count(file)
-			if err != nil {
-				fmt.Printf("[ERROR]: failed to countLine! %q\n %q\n", file, err)
-				return nil, err
+			if err := processFile(file, bufMap, &mu); err != nil {
+				log.Fatalf("processFile failed %q", err)
 			}
-			results = append(results, r)
 		}
 	}
-	return results, nil
+
+	for _, m := range bufMap {
+		result.info = append(result.info, *m)
+	}
+	result.assignAlls()
+	return result, nil
 }
 
-func count(file string) (CntResult, error) {
-	var result CntResult
+func count(file string) (FileInfo, error) {
+	var info FileInfo
 	p, err := os.OpenFile(file, os.O_RDONLY, 0644)
 	if err != nil {
-		return CntResult{}, err
+		log.Fatalf("openFile failed %q", err)
 	}
 	defer p.Close()
 	
-	result.Filetype = retFileType(file)
+	info.Filetype = retFileType(p.Name())
 
 	scanner := bufio.NewScanner(p)
-	const maxCapacity = 1024 * 1024
 	buf := make([]byte, 64*1024)
 	scanner.Buffer(buf, maxCapacity)
 	scanner.Split(bufio.ScanLines)
@@ -102,27 +96,27 @@ func count(file string) (CntResult, error) {
 	var inBlockComment bool = false
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
-		result.Steps++
-		result.Bytes += len(line) + 1 // +1 for the newline character
+		info.Steps++
+		info.Bytes += len(line) + 1 // +1 for the newline character
 
 		if line == "" {
-			result.Blanks++
+			info.Blanks++
 			continue
 		}
 
 		if isSingleComment(line) {
-			result.Comments++
+			info.Comments++
 			continue
 		}
 
 		if isBeginBlockComments(line) {
 			inBlockComment = true
-			result.Comments++
+			info.Comments++
 			continue
 		}
 
 		if inBlockComment {
-			result.Comments++
+			info.Comments++
 			if isEndBlockComments(line) {
 				inBlockComment = false
 			}
@@ -130,10 +124,54 @@ func count(file string) (CntResult, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return CntResult{}, err
+		log.Fatalf("scan failed %q", err)
 	}
+	return info, nil
+}
 
-	return result, nil
+func processFiles(files []string, wg *sync.WaitGroup, mu *sync.Mutex, bufMap map[string]*FileInfo) {
+	defer wg.Done()
+	for _, file := range files {
+		if err := processFile(file, bufMap, mu); err != nil {
+			log.Fatalf("[ERROR]: failed to countLine! %q\n %q\n", file, err)
+		}
+	}
+}
+
+func processFile(file string, bufMap map[string]*FileInfo, mu *sync.Mutex) error {
+	i, err := count(file)
+	if err != nil {
+		log.Fatalf("[ERROR]: count function failed %q", err)
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if existingMap, found := bufMap[i.Filetype]; found {
+		existingMap.Steps += i.Steps
+		existingMap.Blanks += i.Blanks
+		existingMap.Comments += i.Comments
+		existingMap.Bytes += i.Bytes
+	} else {
+		bufMap[i.Filetype] = &i
+	}
+	return nil
+}
+
+func retFileType(file string) string {
+	if fp.Ext(file) == "" {
+		b := fp.Base(file)
+		return b
+	} else {
+		return fp.Ext(file)
+	}
+}
+
+func (r *CntResult) assignAlls() {
+	for _, i := range r.info {
+		r.AllSteps += i.Steps
+		r.AllBlanks += i.Blanks
+		r.AllComments += i.Comments
+		r.AllBytes += int64(i.Bytes)
+	}
 }
 
 // Efficiency of searching comment prefixes from O(n) to O(1)
@@ -248,14 +286,4 @@ func isEndBlockComments(line string) bool {
 
 	_, exists = blockCommentSuffixes[line[len(line)-3:]] // confirm last three chars
     return exists
-}
-
-func retFileType(file string) string {
-	if fp.Ext(file) == "" {
-		b := fp.Base(file)
-		return b
-	} else {
-		return fp.Ext(file)
-	}
-
 }
