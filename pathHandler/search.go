@@ -8,6 +8,9 @@ import (
 
 func Search(path string, ignores map[string][]string) ([]string, error) {
 	var files []string
+  ignoreSet map[string]struct{} = make(map[string]struct{})
+
+
 
 	parsedPath, err := Parse(path)
 	if err != nil {
