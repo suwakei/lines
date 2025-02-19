@@ -15,25 +15,25 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 	}
 
 	err = fp.WalkDir(parsedPath, func(path string, d fs.DirEntry, err error) error {
-		base := fp.Base(path)
+		pathBaseName := fp.Base(path)
 		if err != nil {
 			return err
 		}
 
 		if d.IsDir() {
-			if contains(ignores["dir"], base) {
+			if contains(ignores["dir"], pathBaseName) {
 				return fp.SkipDir
 			}
 			return nil
 		}
 
 		if !d.IsDir() {
-			if contains(ignores["file"], base) {
+			if contains(ignores["file"], pathBaseName) {
 				return nil
 			}
 		}
 
-		if isInvalidFile(base) {
+		if isInvalidFile(pathBaseName) {
 			return nil
 		}
 
@@ -48,14 +48,22 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 	return files, nil
 }
 
-func contains(ignores []string, base string) bool {
-	return slices.Contains(ignores, base)
+func contains(ignores []string, pathBaseName string) bool {
+	if ignores == nil {
+		return false
+	}
+	ignoreSet := make(map[string]struct{}, len(ignores))
+	for _, ignore := range ignores {
+		ignoreSet[ignore] = struct{}{}
+	}
+	_, exist := ignoreSet[pathBaseName]
+	return exist
 }
 
-func isInvalidFile(base string) bool {
-	ext := fp.Ext(base)
+func isInvalidFile(pathBaseName string) bool {
+	ext := fp.Ext(pathBaseName)
 	if ext == "" {
-		if base != "Makefile" || base != "Dockerfile" {
+		if pathBaseName != "Makefile" && pathBaseName != "Dockerfile" {
 				return true
 			}
 	}

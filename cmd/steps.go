@@ -93,18 +93,18 @@ var (
 				return
 			}
 
-			fmt.Println("-----searchfiles-----")
-			for _, file := range files {
-				fmt.Println(file)
-			}
-			fmt.Println("-----ignoreFile-----")
-			for _, i := range ignoreListMap["file"] {
-				fmt.Println(i)
-			}
-			fmt.Println("-----ignoreDir-----")
-			for _, i := range ignoreListMap["dir"] {
-				fmt.Println(i)
-			}
+			// fmt.Println("-----searchfiles-----")
+			// for _, file := range files {
+			// 	fmt.Println(file)
+			// }
+			// fmt.Println("-----ignoreFile-----")
+			// for _, i := range ignoreListMap["file"] {
+			// 	fmt.Println(i)
+			// }
+			// fmt.Println("-----ignoreDir-----")
+			// for _, i := range ignoreListMap["dir"] {
+			// 	fmt.Println(i)
+			// }
 
 			fmt.Println("-----result-----")
 			fmt.Println(counter.Count(files))
