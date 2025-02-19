@@ -107,7 +107,10 @@ var (
 			// }
 
 			fmt.Println("-----result-----")
-			fmt.Println(counter.Count(files))
+  countResult := counter.Count(files)
+			fmt.Println(counterResult)
+
+  view.Write(counterResult)
 		},
 	}
 )
