@@ -68,3 +68,8 @@ var fileTypeList map[string]string = map[string]string{
 	".pdf": "Portable Document Format",
 	".epub": "Electronic Publication",
 }
+
+func Write(content counter.CntResult, distPath io.Reader) {
+
+}
+
