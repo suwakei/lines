@@ -55,4 +55,3 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 		)
 		}
 	}
-}
