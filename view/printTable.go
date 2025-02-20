@@ -45,9 +45,11 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 		largest達を用いて空白を調整する
 		fmt.Printf("|%d%s|  %s%s|  %d%s|  %d%s|  %d%s|  %d%s|  %d(%dKB)%s|\n",
 			i+1,
-  space(i+1)
+  space(fmt.Sprint(i+1), largestNumDigit),
 			fileType,
+    space(fileType, largestFileType),
 			target.Steps,
+    space(fmt.Sprint(target.Steps), largestSteps),
 			target.Blanks,
 			target.Comments,
 			target.Files,
@@ -57,4 +59,8 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 		}
 	}
 
-func space()
+func space(currentTarget string, largestLen int) string {
+    currentLen := len(currentTarget)
+    spaceNum := largestLen - currentLen
+    return strings.Repeat(" ", spaceNum)
+}
