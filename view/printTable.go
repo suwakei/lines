@@ -2,7 +2,7 @@ package view
 
 import (
 	"fmt"
-
+    "strings"
 	"github.com/suwakei/steps/counter"
 	//"github.com/fatih/color"
 )
@@ -43,8 +43,9 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 		}
 
 		largest達を用いて空白を調整する
-		fmt.Printf("|%d  |  %s  |  %d  |  %d  |  %d  |  %d  |  %d(%dKB)  |\n",
+		fmt.Printf("|%d%s|  %s%s|  %d%s|  %d%s|  %d%s|  %d%s|  %d(%dKB)%s|\n",
 			i+1,
+  space(i+1)
 			fileType,
 			target.Steps,
 			target.Blanks,
@@ -55,3 +56,5 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 		)
 		}
 	}
+
+func space()
