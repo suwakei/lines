@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/suwakei/steps/counter"
 	"github.com/suwakei/steps/pathHandler"
+	"github.com/suwakei/steps/view"
 )
 
 const VERSION string = "0.1.0"
@@ -40,9 +42,11 @@ var (
 
 			ignoreFile, _ := cmd.Flags().GetString("ignore")
 			exts, _ := cmd.Flags().GetStringSlice("ext")
+			dists, _ := cmd.Flags().GetStringSlice("dist")
 
 			ignoreListMap := map[string][]string{
-				"file": {"*.exe",
+				"file": {
+				"*.exe",
 				"*.com",
 				"*.dll",
 				"*.so",
@@ -61,8 +65,9 @@ var (
 				"*.gif",
 				"*.bmp",
 				"*.tiff",
-				"*.webp"},
-			}
+				"*.webp",
+			},
+		}
 
 			if cmd.Flags().Changed("ignore") {
 				if ignoreFile == "" {
@@ -93,6 +98,18 @@ var (
 				return
 			}
 
+			if cmd.Flags().Changed("dist") {
+				if len(dists) == 0 {
+				} else {
+					for i := 0; i < len(dists); i++ {
+						dists[i], err = pathHandler.Parse(dists[i])
+						if err != nil {
+							log.Fatal(err)
+						}
+					}
+				}
+			}
+
 			// fmt.Println("-----searchfiles-----")
 			// for _, file := range files {
 			// 	fmt.Println(file)
@@ -106,11 +123,14 @@ var (
 			// 	fmt.Println(i)
 			// }
 
-			fmt.Println("-----result-----")
-  countResult := counter.Count(files)
-			fmt.Println(counterResult)
+			// fmt.Println("-----result-----")
+			countResult, err := counter.Count(files, inputPath)
+			if err != nil {
+				log.Fatal(err)
+			}
+			// fmt.Println(countResult)
 
-  view.Write(counterResult)
+			view.Write(countResult, dists, ignoreListMap)
 		},
 	}
 )
@@ -124,7 +144,7 @@ func Execute() {
 
 func init() {
 	rootCmd.Flags().BoolP("version", "v", false, "Print version of this app")
-	rootCmd.Flags().StringP("dist", "d", "", "input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt] or \"localhost\" is output result on your Browser")
+	rootCmd.Flags().StringSliceP("dist", "d", []string{}, "input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt]")
 	rootCmd.Flags().StringP("only", "o", "", "By specifying an extension or file name, only files with that extension or name are targeted. \"-o=*.go\" or \"-o *.go\" or \"-o=test.txt\"")
 	rootCmd.Flags().StringP("ignore", "i", "", "input your .gitignore file path. ignore extentions in .gitignore file. (default: .gitignore)")
 	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=test.json, *.js, *.go\" or \"-e=test.json -e=*.js -e=*.go\". (default: *.exe, *.com, *.dll, *.so, *.dylib, *.xls, *.xlsx, *.pdf, *.doc, *.docx, *.ppt, *.pptx)")

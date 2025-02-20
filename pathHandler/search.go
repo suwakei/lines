@@ -3,23 +3,10 @@ package pathHandler
 import (
 	"io/fs"
 	fp "path/filepath"
-	"slices"
 )
 
 func Search(path string, ignores map[string][]string) ([]string, error) {
 	var files []string
-  ignoreSetDir map[string]struct{} = make(map[string]struct{}, len(ignores["dir"]))
-
-        for _, ignore := range ignores["dir"] {
-                ignoreSetDir[ignore] = struct{}{}
-        }
-
-ignoreSetFile map[string]struct{} = make(map[string]struct{}, len(ignores["file"]))
-
-for _, ignore := range ignores["file"] {
-                ignoreSetFile[ignore] = struct{}{}
-        }
-
 
 	parsedPath, err := Parse(path)
 	if err != nil {
@@ -64,18 +51,19 @@ func contains(ignores []string, pathBaseName string) bool {
 	if ignores == nil {
 		return false
 	}
-	
+	ignoreSet := make(map[string]struct{})
+	for _, ignore := range ignores {
+		ignoreSet[ignore] = struct{}{}
+	}
 	_, exist := ignoreSet[pathBaseName]
 	return exist
 }
 
 func isInvalidFile(pathBaseName string) bool {
 	ext := fp.Ext(pathBaseName)
-	if ext == "" {
-		if pathBaseName != "Makefile" && pathBaseName != "Dockerfile" {
+	if ext == "" && pathBaseName != "Makefile" && pathBaseName != "Dockerfile" {
 				return true
 			}
-	}
 	return false
 }
 

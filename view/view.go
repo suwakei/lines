@@ -1,7 +1,9 @@
 package view
 
 import (
+	"fmt"
 
+	"github.com/suwakei/steps/counter"
 )
 
 var fileTypeList map[string]string = map[string]string{
@@ -69,7 +71,65 @@ var fileTypeList map[string]string = map[string]string{
 	".epub": "Electronic Publication",
 }
 
-func Write(content counter.CntResult, distPath io.Reader) {
+func Write(cntResult counter.CntResult, distPaths []string, ignoreListMap map[string][]string) {
+	pathsLen := len(distPaths)
+	if pathsLen == 0 {
+		PrintTable(cntResult, ignoreListMap)
+	} else {
 
+	}
 }
 
+func b2kb(Bytes int) int {
+	var kb int
+	if Bytes >= 1024 {
+		kb = Bytes / 1024
+		return kb
+	} else {
+		return Bytes
+	}
+}
+
+func largest(cntResult counter.CntResult) (
+	largestFileType int,
+	largestSteps int,
+	largestBlanks int,
+	largestComments int,
+	largestFiles int,
+	largestBytes int,
+	) {
+	info := cntResult.Info
+	for _, i := range info {
+		fileTypeNum := len(fmt.Sprint(i.Filetype))
+		stepsNum := len(fmt.Sprint(i.Steps))
+		blanksNum := len(fmt.Sprint(i.Blanks))
+		commentsNum := len(fmt.Sprint(i.Comments))
+		filesNum := len(fmt.Sprint(i.Files))
+		bytesNum := len(fmt.Sprint(i.Bytes))
+
+		if largestFileType < fileTypeNum {
+			largestFileType = fileTypeNum
+		}
+
+		if largestSteps < stepsNum {
+			largestSteps = stepsNum
+		}
+
+		if largestBlanks < blanksNum {
+			largestBlanks = blanksNum
+		}
+
+		if largestComments < commentsNum {
+			largestComments = commentsNum
+		}
+
+		if largestFiles < filesNum {
+			largestFiles = filesNum
+		}
+
+		if largestBytes < bytesNum {
+			largestBytes = bytesNum
+		}
+	}
+	return 
+}

@@ -14,11 +14,13 @@ type FileInfo struct {
 	Steps int
 	Blanks int
 	Comments int
+	Files int
 	Bytes int
 }
 
 type CntResult struct {
-    info []FileInfo
+    Info []FileInfo
+	InputPath string
     AllSteps int
     AllBlanks int
     AllComments int
@@ -30,7 +32,7 @@ const (
 	concurrencyThreshold = 6
 )
 
-func Count(files []string) (CntResult, error) {
+func Count(files []string, inputPath string) (CntResult, error) {
 	var(
 		result CntResult
 		bufMap map[string]*FileInfo = make(map[string]*FileInfo)
@@ -38,6 +40,8 @@ func Count(files []string) (CntResult, error) {
 		mu sync.Mutex
 		wg sync.WaitGroup
 	)
+
+	result.InputPath = inputPath
 
 	if lenFiles >= concurrencyThreshold {
 		var (
@@ -72,7 +76,7 @@ func Count(files []string) (CntResult, error) {
 	}
 
 	for _, m := range bufMap {
-		result.info = append(result.info, *m)
+		result.Info = append(result.Info, *m)
 	}
 	result.assignAlls()
 	return result, nil
@@ -150,8 +154,10 @@ func processFile(file string, bufMap map[string]*FileInfo, mu *sync.Mutex) error
 		existingMap.Blanks += i.Blanks
 		existingMap.Comments += i.Comments
 		existingMap.Bytes += i.Bytes
+		existingMap.Files += 1
 	} else {
 		bufMap[i.Filetype] = &i
+		bufMap[i.Filetype].Files += 1
 	}
 	return nil
 }
@@ -166,7 +172,7 @@ func retFileType(file string) string {
 }
 
 func (r *CntResult) assignAlls() {
-	for _, i := range r.info {
+	for _, i := range r.Info {
 		r.AllSteps += i.Steps
 		r.AllBlanks += i.Blanks
 		r.AllComments += i.Comments
