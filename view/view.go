@@ -25,9 +25,11 @@ var fileTypeList map[string]string = map[string]string{
 	".go": "Go",
 	".php": "PHP",
 	".xml": "XML",
-	".json": "JSON",
-	".yaml": "YAML",
-	".yml": "YAML",
+	".json": "JSON File",
+	".jsonc": "JSONC File",
+	".yaml": "YAML File",
+	".yml": "YAML File",
+	".toml": "TOML",
 	".md": "Markdown",
 	".txt": "Plain Text",
 	".sql": "SQL",
@@ -81,13 +83,7 @@ func Write(cntResult counter.CntResult, distPaths []string, ignoreListMap map[st
 }
 
 func b2kb(Bytes int) int {
-	var kb int
-	if Bytes >= 1024 {
-		kb = Bytes / 1024
-		return kb
-	} else {
-		return Bytes
-	}
+	return Bytes / 1024
 }
 
 func largest(cntResult counter.CntResult) (

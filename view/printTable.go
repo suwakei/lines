@@ -12,7 +12,7 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 	fmt.Println("All Steps: ", cntResult.AllSteps)
 	fmt.Println("All Blanks: ", cntResult.AllBlanks)
 	fmt.Println("All Comments: ", cntResult.AllComments)
-	fmt.Println("All Bytes: ", cntResult.AllBytes)
+	fmt.Printf("All Bytes: %d(%dKB)\n", cntResult.AllBytes, b2kb(int(cntResult.AllBytes)))
 	if len(ignoreListMap["file"]) != 0 { 
 		fmt.Println("All ignore files: ", ignoreListMap["file"])
 	} else {
@@ -33,6 +33,8 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 		cntResultLen int = len(cntResult.Info)
 		largestNumDigit = len(fmt.Sprint(cntResultLen))
 		largestFileType, largestSteps, largestBlanks, largestComments,largestFiles, largestBytes = largest(cntResult)
+
+
 	)
 	for i := 0; i < cntResultLen; i++ {
 		target = cntResult.Info[i]
@@ -42,25 +44,33 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 			fileType = target.Filetype
 		}
 
-		largest達を用いて空白を調整する
-		fmt.Printf("|%d%s|  %s%s|  %d%s|  %d%s|  %d%s|  %d%s|  %d(%dKB)%s|\n",
+		fmt.Printf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %d(%dKB)%s   |\n",
 			i+1,
-  space(fmt.Sprint(i+1), largestNumDigit),
+			space(fmt.Sprint(i+1), largestNumDigit),
 			fileType,
-    space(fileType, largestFileType),
+			space(fileType, largestFileType),
 			target.Steps,
-    space(fmt.Sprint(target.Steps), largestSteps),
+			space(fmt.Sprint(target.Steps), largestSteps),
 			target.Blanks,
+			space(fmt.Sprint(target.Blanks), largestBlanks),
 			target.Comments,
+			space(fmt.Sprint(target.Comments), largestComments),
 			target.Files,
+			space(fmt.Sprint(target.Files), largestFiles),
 			target.Bytes,
 			b2kb(target.Bytes),
+			space(fmt.Sprint(target.Bytes), largestBytes),
 		)
 		}
 	}
 
 func space(currentTarget string, largestLen int) string {
     currentLen := len(currentTarget)
-    spaceNum := largestLen - currentLen
+	var spaceNum int
+	if largestLen - currentLen > -1 {
+		spaceNum = largestLen - currentLen
+	} else {
+		spaceNum = 0
+	}
     return strings.Repeat(" ", spaceNum)
 }
