@@ -285,11 +285,17 @@ func isEndBlockComments(line string) bool {
     }
 
 	// confirm suffix directly
-    _, exists := blockCommentSuffixes[line[len(line)-2:]] // confirm last two chars
-    if exists {
-        return exists
+    if len(line) >= 2 {
+        if _, exists := blockCommentSuffixes[line[len(line)-2:]]; exists {
+            return true
+        }
     }
 
-	_, exists = blockCommentSuffixes[line[len(line)-3:]] // confirm last three chars
-    return exists
+    if len(line) >= 3 {
+        if _, exists := blockCommentSuffixes[line[len(line)-3:]]; exists {
+            return true
+        }
+    }
+
+	return false
 }

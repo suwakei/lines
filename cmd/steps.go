@@ -46,26 +46,26 @@ var (
 
 			ignoreListMap := map[string][]string{
 				"file": {
-				"*.exe",
-				"*.com",
-				"*.dll",
-				"*.so",
-				"*.dylib",
-				"*.xls",
-				"*.xlsx",
-				"*.pdf",
-				"*.doc",
-				"*.docx",
-				"*.ppt",
-				"*.pptx",
-				"*.png",
-				"*.jpg",
-				"*.jpeg",
-				"*.svg",
-				"*.gif",
-				"*.bmp",
-				"*.tiff",
-				"*.webp",
+				".exe",
+				".com",
+				".dll",
+				".so",
+				".dylib",
+				".xls",
+				".xlsx",
+				".pdf",
+				".doc",
+				".docx",
+				".ppt",
+				".pptx",
+				".png",
+				".jpg",
+				".jpeg",
+				".svg",
+				".gif",
+				".bmp",
+				".tiff",
+				".webp",
 			},
 		}
 
@@ -73,7 +73,7 @@ var (
 				if ignoreFile == "" {
 					ignoreFile = ".gitignore"
 				}
-				temp, err := pathHandler.MakeIgnoreList[string](ignoreFile)
+				temp, err := pathHandler.MakeIgnoreList(ignoreFile)
 				if err != nil {
 					fmt.Println("[ERROR]: failed to make ignore listMap!\n", err)
 					return
@@ -83,7 +83,7 @@ var (
 			}
 
 			if cmd.Flags().Changed("ext") {
-				temp, err := pathHandler.MakeIgnoreList[[]string](exts)
+				temp, err := pathHandler.MakeIgnoreList(exts)
 				if err != nil {
 					fmt.Println("[ERROR]: failed to make ignore listMap!\n", err)
 					return
@@ -109,26 +109,10 @@ var (
 					}
 				}
 			}
-
-			// fmt.Println("-----searchfiles-----")
-			// for _, file := range files {
-			// 	fmt.Println(file)
-			// }
-			// fmt.Println("-----ignoreFile-----")
-			// for _, i := range ignoreListMap["file"] {
-			// 	fmt.Println(i)
-			// }
-			// fmt.Println("-----ignoreDir-----")
-			// for _, i := range ignoreListMap["dir"] {
-			// 	fmt.Println(i)
-			// }
-
-			// fmt.Println("-----result-----")
 			countResult, err := counter.Count(files, inputPath)
 			if err != nil {
 				log.Fatal(err)
 			}
-			// fmt.Println(countResult)
 
 			view.Write(countResult, dists, ignoreListMap)
 		},
