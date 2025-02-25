@@ -176,6 +176,7 @@ func (r *CntResult) assignAlls() {
 		r.AllSteps += i.Steps
 		r.AllBlanks += i.Blanks
 		r.AllComments += i.Comments
+  r.AllFiles += i.Files
 		r.AllBytes += int64(i.Bytes)
 	}
 }
