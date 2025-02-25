@@ -20,7 +20,7 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
     fmt.Println("All Steps: ", cntResult.AllSteps)
     fmt.Println("All Blanks: ", cntResult.AllBlanks)
     fmt.Println("All Comments: ", cntResult.AllComments)
-    fmt.Println("All Files: ")
+    fmt.Println("All Files: cntResult.AllFiles")
     fmt.Printf("All Bytes: %d(%dKB)\n", cntResult.AllBytes, b2kb(int(cntResult.AllBytes)))
     if len(ignoreListMap["file"]) != 0 {
         fmt.Println("All ignore files: ", ignoreListMap["file"])
