@@ -33,7 +33,6 @@ var (
 				fmt.Println("[ERROR]: no path input!")
 				return
 			}
-
 			inputPath, err := pathHandler.Parse(args[0])
 			if err != nil {
 				fmt.Println("[ERROR]: failed to parse input path!\n", err)
