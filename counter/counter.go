@@ -24,6 +24,7 @@ type CntResult struct {
     AllSteps int
     AllBlanks int
     AllComments int
+	AllFiles int
     AllBytes int64
 }
 
@@ -176,7 +177,7 @@ func (r *CntResult) assignAlls() {
 		r.AllSteps += i.Steps
 		r.AllBlanks += i.Blanks
 		r.AllComments += i.Comments
-  r.AllFiles += i.Files
+        r.AllFiles += i.Files
 		r.AllBytes += int64(i.Bytes)
 	}
 }

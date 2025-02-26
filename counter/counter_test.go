@@ -1,13 +1,7 @@
 package counter
 
 import (
-	"testing"
-)
-
-package counter
-
-import (
-    "os"
+    "sync"
     "testing"
 )
 
