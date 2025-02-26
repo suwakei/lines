@@ -12,6 +12,12 @@ func MakeIgnoreList[eOri string | []string] (ignores eOri) (map[string][]string,
 
 	switch v := any(ignores).(type) {
 	case string:
+		if v == "" {
+			ignoreListMap["file"] = []string{}
+			ignoreListMap["dir"] = []string{}
+			return ignoreListMap, nil
+		}
+
 		if v != ".gitignore" {
 			abs, _ := Parse(v)
 			return nil, fmt.Errorf("[INFO]: ignore file must be .gitignore\n not exist %s", abs)

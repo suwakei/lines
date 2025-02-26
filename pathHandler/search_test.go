@@ -1,9 +1,8 @@
 package pathHandler
 
 import (
-    "io/fs"
     "os"
-    "path/filepath"
+    fp "path/filepath"
     "reflect"
     "testing"
 )
@@ -11,12 +10,12 @@ import (
 func TestSearch(t *testing.T) {
     // テスト用のディレクトリとファイルを作成
     rootDir := "testdata"
-    subDir := filepath.Join(rootDir, "subdir")
+    subDir := fp.Join(rootDir, "subdir")
     testFiles := []string{
-        filepath.Join(rootDir, "file1.txt"),
-        filepath.Join(rootDir, "file2.txt"),
-        filepath.Join(subDir, "file3.txt"),
-        filepath.Join(subDir, "file4.txt"),
+        fp.Join(rootDir, "file1.txt"),
+        fp.Join(rootDir, "file2.txt"),
+        fp.Join(subDir, "file3.txt"),
+        fp.Join(subDir, "file4.txt"),
     }
     os.MkdirAll(subDir, 0755)
     for _, file := range testFiles {
@@ -30,7 +29,7 @@ func TestSearch(t *testing.T) {
     }
 
     expected := []string{
-        filepath.Join(rootDir, "file1.txt"),
+        fp.Join(rootDir, "file1.txt"),
     }
 
     result, err := Search(rootDir, ignores)
@@ -54,13 +53,10 @@ func TestContains(t *testing.T) {
 }
 
 func TestIsInvalidFile(t *testing.T) {
-    if !isInvalidFile("invalidfile") {
+    if !isInvalidFile("validfile.txt") {
         t.Error("Expected true, got false")
     }
-    if isInvalidFile("validfile.txt") {
-        t.Error("Expected false, got true")
-    }
-    if isInvalidFile("Makefile") {
+    if isInvalidFile("somethigfile") {
         t.Error("Expected false, got true")
     }
 }

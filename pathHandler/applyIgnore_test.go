@@ -9,19 +9,19 @@ import (
 func TestMakeIgnoreList_String(t *testing.T) {
     // テスト用の.gitignoreファイルを作成
     ignoreFileContent := "testfile.txt\nignoredir/\n# This is a comment\n"
-    ignoreFileName := ".gitignore"
-    err := os.WriteFile(ignoreFileName, []byte(ignoreFileContent), 0644)
+    ignoreFilePath := "./testdata/.gitignore"
+    err := os.WriteFile(ignoreFilePath, []byte(ignoreFileContent), 0644)
     if err != nil {
-        t.Fatalf("Failed to create test .gitignore file: %v", err)
+        t.Fatalf("Failed to create test ./testdata/.gitignore file: %v", err)
     }
-    defer os.Remove(ignoreFileName)
+    defer os.Remove(ignoreFilePath)
 
     expected := map[string][]string{
         "file": {"testfile.txt"},
         "dir":  {"ignoredir/"},
     }
 
-    result, err := MakeIgnoreList(ignoreFileName)
+    result, err := MakeIgnoreList(ignoreFilePath)
     if err != nil {
         t.Errorf("MakeIgnoreList returned an error: %v", err)
     }
@@ -64,7 +64,7 @@ func TestMakeIgnoreList_Slice_Empty(t *testing.T) {
 
 func TestIsFile(t *testing.T) {
     // テスト用のファイルを作成
-    fileName := "testfile.txt"
+    fileName := "./testdata/testfile.txt"
     err := os.WriteFile(fileName, []byte("test content"), 0644)
     if err != nil {
         t.Fatalf("Failed to create test file: %v", err)
@@ -76,7 +76,7 @@ func TestIsFile(t *testing.T) {
     }
 
     // ディレクトリをテスト
-    dirName := "testdir"
+    dirName := "./testdata/testdir"
     err = os.Mkdir(dirName, 0755)
     if err != nil {
         t.Fatalf("Failed to create test directory: %v", err)
