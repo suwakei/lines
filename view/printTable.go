@@ -20,7 +20,7 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
     fmt.Println("All Steps: ", cntResult.AllSteps)
     fmt.Println("All Blanks: ", cntResult.AllBlanks)
     fmt.Println("All Comments: ", cntResult.AllComments)
-    fmt.Println("All Files: cntResult.AllFiles")
+    fmt.Println("All Files: ", cntResult.AllFiles)
     fmt.Printf("All Bytes: %d(%dKB)\n", cntResult.AllBytes, b2kb(int(cntResult.AllBytes)))
     if len(ignoreListMap["file"]) != 0 {
         fmt.Println("All ignore files: ", ignoreListMap["file"])
@@ -90,20 +90,26 @@ func makeHeader(largests largests, lineLen int, numLen int) string {
 
 func makeBody(cntResult counter.CntResult, largests largests) string {
     var body strings.Builder
+	var ln string = "\n"
+	var fileType string
     cntResultLen := len(cntResult.Info)
     largestNumDigit := len(fmt.Sprint(cntResultLen))
 
     for i := 0; i < cntResultLen; i++ {
         target := cntResult.Info[i]
-        fileType := target.Filetype
         if ft, found := fileTypeList[target.Filetype]; found {
-            fileType = ft
+            fileType = ft[0]
         }
 
-        body.WriteString(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %d(%dKB)%s   |\n",
+		if i+1 == cntResultLen {
+			ln = ""
+		}
+
+        body.WriteString(fmt.Sprintf("|%d%s|  %s(%s)%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %d(%dKB)%s   |%s",
             i+1,
             space(fmt.Sprint(i+1), largestNumDigit),
             fileType,
+			target.Filetype,
             space(fileType, largests.largestFileType),
             target.Steps,
             space(fmt.Sprint(target.Steps), largests.largestSteps),
@@ -116,6 +122,7 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
             target.Bytes,
             b2kb(target.Bytes),
             space(fmt.Sprint(target.Bytes), largests.largestBytes),
+			ln,
         ))
     }
 
