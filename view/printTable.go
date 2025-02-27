@@ -105,11 +105,10 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
 			ln = ""
 		}
 
-        body.WriteString(fmt.Sprintf("|%d%s|  %s(%s)%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %d(%dKB)%s   |%s",
+        body.WriteString(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %d(%dKB)%s   |%s",
             i+1,
             space(fmt.Sprint(i+1), largestNumDigit),
             fileType,
-			target.Filetype,
             space(fileType, largests.largestFileType),
             target.Steps,
             space(fmt.Sprint(target.Steps), largests.largestSteps),
@@ -125,7 +124,6 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
 			ln,
         ))
     }
-
     return body.String()
 }
 
