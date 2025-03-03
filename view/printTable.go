@@ -84,8 +84,9 @@ func calculateLengths(cntResult counter.CntResult, largests largests) (int, int)
 func makeHeader(largests largests, lineLen int, numLen int) string {
     numberHeader := "|" + strings.Repeat("#", numLen) + "|"
     fileTypeHeader := "  FileType" + space("FileType", largests.largestFileType) + "  |"
+	stepsHeader := "  Steps" + space("Steps", largests.largestSteps) + "  |"
 
-    return numberHeader + fileTypeHeader
+    return numberHeader + fileTypeHeader + stepsHeader
 }
 
 func makeBody(cntResult counter.CntResult, largests largests) string {
