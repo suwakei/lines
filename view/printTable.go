@@ -33,6 +33,7 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
     } else {
         fmt.Println("All ignore dirs: ", "None")
     }
+
     fmt.Println("")
     fmt.Println("")
 
@@ -57,12 +58,17 @@ func space(currentTarget string, largestLen int) string {
     return strings.Repeat(" ", spaceNum)
 }
 
-func makeTable(cntResult counter.CntResult, largests largests) (string, string, string, string) {
+func makeTable(cntResult counter.CntResult, largests largests) (
+    roof string,
+    header string,
+    body string,
+    footer string,
+    ) {
     lineLen, numLen := calculateLengths(cntResult, largests)
-    roof := " " + strings.Repeat("_", lineLen-3) + " "
-    header := makeHeader(largests, lineLen, numLen)
-    body := makeBody(cntResult, largests)
-    footer := "|" + strings.Repeat("_", numLen) + "|" + strings.Repeat("_", lineLen-5) + "|"
+    roof = " " + strings.Repeat("_", lineLen-3) + " "
+    header = makeHeader(largests, numLen)
+    body = makeBody(cntResult, largests)
+    footer = "|" + strings.Repeat("_", numLen) + "|" + strings.Repeat("_", lineLen-5) + "|"
     return roof, header, body, footer
 }
 
@@ -81,12 +87,26 @@ func calculateLengths(cntResult counter.CntResult, largests largests) (int, int)
     return lineLen, largestNumDigit
 }
 
-func makeHeader(largests largests, lineLen int, numLen int) string {
-    numberHeader := "|" + strings.Repeat("#", numLen) + "|"
-    fileTypeHeader := "  FileType" + space("FileType", largests.largestFileType) + "  |"
-	stepsHeader := "  Steps" + space("Steps", largests.largestSteps) + "  |"
+func makeHeader(largests largests, numLen int) string {
+    var header strings.Builder
 
-    return numberHeader + fileTypeHeader + stepsHeader
+    header.WriteString(fmt.Sprintf("|%s|  %s%s  |  %s%s  |  %s%s  |  %s%s  |  %s%s  |  %s%s  |",
+    strings.Repeat("#", numLen),
+    "FileType",
+    space("FileType", largests.largestFileType),
+    "Steps",
+    space("Steps", largests.largestSteps),
+    "Blanks",
+    space("Blanks", largests.largestBlanks),
+    "Comments",
+    space("Comments", largests.largestComments),
+    "Files",
+    space("Files", largests.largestFiles),
+    "Bytes",
+    space("Bytes", largests.largestBytes)),
+    )
+    header.Reset()
+    return header.String()
 }
 
 func makeBody(cntResult counter.CntResult, largests largests) string {

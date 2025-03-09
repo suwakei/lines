@@ -84,10 +84,6 @@ func Write(cntResult counter.CntResult, distPaths []string, ignoreListMap map[st
 	}
 }
 
-func b2kb(Bytes int) int {
-	return Bytes / 1024
-}
-
 func largest(cntResult counter.CntResult, fileTypeList map[string][]string) (
 	largestFileType int,
 	largestSteps int,
@@ -97,6 +93,12 @@ func largest(cntResult counter.CntResult, fileTypeList map[string][]string) (
 	largestBytes int,
 	) {
 	var fileTypeNum int
+	largestFileType = len("FileType")
+	largestSteps = len("Steps")
+	largestBlanks = len("Blanks")
+	largestComments = len("Comments")
+	largestFiles = len("Files")
+	largestBytes = len("Bytes")
 	info := cntResult.Info
 	for _, i := range info {
 		if _, found := fileTypeList[i.Filetype]; found {
@@ -104,6 +106,7 @@ func largest(cntResult counter.CntResult, fileTypeList map[string][]string) (
 		} else {
 			fileTypeNum = len(fmt.Sprint(i.Filetype))
 		}
+
 		stepsNum := len(fmt.Sprint(i.Steps))
 		blanksNum := len(fmt.Sprint(i.Blanks))
 		commentsNum := len(fmt.Sprint(i.Comments))

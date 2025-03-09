@@ -2,6 +2,7 @@ package counter
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	fp "path/filepath"
@@ -15,7 +16,8 @@ type FileInfo struct {
 	Blanks int
 	Comments int
 	Files int
-	Bytes int
+	Bytes string
+	bytesBuf int
 }
 
 type CntResult struct {
@@ -25,7 +27,7 @@ type CntResult struct {
     AllBlanks int
     AllComments int
 	AllFiles int
-    AllBytes int64
+    AllBytes string
 }
 
 const (
@@ -102,7 +104,7 @@ func count(file string) (FileInfo, error) {
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		info.Steps++
-		info.Bytes += len(line) + 1 // +1 for the newline character
+		info.bytesBuf += len(line) + 1 // +1 for the newline character
 
 		if line == "" {
 			info.Blanks++
@@ -154,7 +156,7 @@ func processFile(file string, bufMap map[string]*FileInfo, mu *sync.Mutex) error
 		existingMap.Steps += i.Steps
 		existingMap.Blanks += i.Blanks
 		existingMap.Comments += i.Comments
-		existingMap.Bytes += i.Bytes
+		existingMap.bytesBuf += i.bytesBuf
 		existingMap.Files += 1
 	} else {
 		bufMap[i.Filetype] = &i
@@ -173,13 +175,15 @@ func retFileType(file string) string {
 }
 
 func (r *CntResult) assignAlls() {
+	var AllBytesBuf int
 	for _, i := range r.Info {
 		r.AllSteps += i.Steps
 		r.AllBlanks += i.Blanks
 		r.AllComments += i.Comments
         r.AllFiles += i.Files
-		r.AllBytes += int64(i.Bytes)
+		AllBytesBuf += i.bytesBuf
 	}
+	r.AllBytes = fmt.Sprint("%d(%dKB)", AllBytesBuf, b2kb(AllBytesBuf))
 }
 
 // Efficiency of searching comment prefixes from O(n) to O(1)
@@ -300,4 +304,8 @@ func isEndBlockComments(line string) bool {
     }
 
 	return false
+}
+
+func b2kb(Bytes int) int {
+	return Bytes / 1024
 }
