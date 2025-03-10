@@ -31,7 +31,7 @@ type CntResult struct {
 }
 
 const (
-	maxCapacity = 1024 * 1024
+	maxCapacity = 64 * 1024
 	concurrencyThreshold = 6
 )
 
@@ -81,6 +81,10 @@ func Count(files []string, inputPath string) (CntResult, error) {
 	for _, m := range bufMap {
 		result.Info = append(result.Info, *m)
 	}
+	for _, i := range result.Info {
+		i.Bytes = fmt.Sprintf("%d(%dKB)", i.bytesBuf, b2kb(i.bytesBuf))
+	}
+	fmt.Println(result.Info)
 	result.assignAlls()
 	return result, nil
 }
@@ -183,7 +187,7 @@ func (r *CntResult) assignAlls() {
         r.AllFiles += i.Files
 		AllBytesBuf += i.bytesBuf
 	}
-	r.AllBytes = fmt.Sprint("%d(%dKB)", AllBytesBuf, b2kb(AllBytesBuf))
+	r.AllBytes = fmt.Sprintf("%d(%dKB)", AllBytesBuf, b2kb(AllBytesBuf))
 }
 
 // Efficiency of searching comment prefixes from O(n) to O(1)

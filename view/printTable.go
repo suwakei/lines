@@ -21,7 +21,7 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
     fmt.Println("All Blanks: ", cntResult.AllBlanks)
     fmt.Println("All Comments: ", cntResult.AllComments)
     fmt.Println("All Files: ", cntResult.AllFiles)
-    fmt.Printf("All Bytes: %d(%dKB)\n", cntResult.AllBytes, b2kb(int(cntResult.AllBytes)))
+    fmt.Printf("All Bytes: %s\n", cntResult.AllBytes)
     if len(ignoreListMap["file"]) != 0 {
         fmt.Println("All ignore files: ", ignoreListMap["file"])
     } else {
@@ -75,14 +75,14 @@ func makeTable(cntResult counter.CntResult, largests largests) (
 func calculateLengths(cntResult counter.CntResult, largests largests) (int, int) {
     cntResultLen := len(cntResult.Info)
     largestNumDigit := len(fmt.Sprint(cntResultLen))
-    lineLen := len(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %d(%dKB)%s   |\n",
+    lineLen := len(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %s%s   |\n",
         1, space(fmt.Sprint(1), largestNumDigit),
         "FileType", space("FileType", largests.largestFileType),
         0, space(fmt.Sprint(0), largests.largestSteps),
         0, space(fmt.Sprint(0), largests.largestBlanks),
         0, space(fmt.Sprint(0), largests.largestComments),
         0, space(fmt.Sprint(0), largests.largestFiles),
-        0, b2kb(0), space(fmt.Sprint(0), largests.largestBytes),
+        0, space(fmt.Sprint(0), largests.largestBytes),
     ))
     return lineLen, largestNumDigit
 }
@@ -126,7 +126,7 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
 			ln = ""
 		}
 
-        body.WriteString(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %d(%dKB)%s   |%s",
+        body.WriteString(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %s%s   |%s",
             i+1,
             space(fmt.Sprint(i+1), largestNumDigit),
             fileType,
@@ -140,7 +140,6 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
             target.Files,
             space(fmt.Sprint(target.Files), largests.largestFiles),
             target.Bytes,
-            b2kb(target.Bytes),
             space(fmt.Sprint(target.Bytes), largests.largestBytes),
 			ln,
         ))
