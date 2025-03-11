@@ -36,6 +36,7 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 
     fmt.Println("")
     fmt.Println("")
+    fmt.Println(cntResult.Info)
 
     largests := largestsNew(cntResult)
 
@@ -64,27 +65,20 @@ func makeTable(cntResult counter.CntResult, largests largests) (
     body string,
     footer string,
     ) {
-    lineLen, numLen := calculateLengths(cntResult, largests)
-    roof = " " + strings.Repeat("_", lineLen-3) + " "
+    numLen := getNumLen(cntResult)
     header = makeHeader(largests, numLen)
+    lineLen := len(header)
+
+    roof = " " + strings.Repeat("_", lineLen-2)
     body = makeBody(cntResult, largests)
-    footer = "|" + strings.Repeat("_", numLen) + "|" + strings.Repeat("_", lineLen-5) + "|"
+    footer = " " + strings.Repeat("¯", lineLen-2)
     return roof, header, body, footer
 }
 
-func calculateLengths(cntResult counter.CntResult, largests largests) (int, int) {
-    cntResultLen := len(cntResult.Info)
-    largestNumDigit := len(fmt.Sprint(cntResultLen))
-    lineLen := len(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %s%s   |\n",
-        1, space(fmt.Sprint(1), largestNumDigit),
-        "FileType", space("FileType", largests.largestFileType),
-        0, space(fmt.Sprint(0), largests.largestSteps),
-        0, space(fmt.Sprint(0), largests.largestBlanks),
-        0, space(fmt.Sprint(0), largests.largestComments),
-        0, space(fmt.Sprint(0), largests.largestFiles),
-        0, space(fmt.Sprint(0), largests.largestBytes),
-    ))
-    return lineLen, largestNumDigit
+func getNumLen(cntResult counter.CntResult) int {
+    num := len(cntResult.Info)
+    numLen := len(fmt.Sprint(num))
+    return numLen
 }
 
 func makeHeader(largests largests, numLen int) string {
@@ -105,8 +99,9 @@ func makeHeader(largests largests, numLen int) string {
     "Bytes",
     space("Bytes", largests.largestBytes)),
     )
+    s := header.String()
     header.Reset()
-    return header.String()
+    return s
 }
 
 func makeBody(cntResult counter.CntResult, largests largests) string {
@@ -118,7 +113,7 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
 
     for i := 0; i < cntResultLen; i++ {
         target := cntResult.Info[i]
-        if ft, found := fileTypeList[target.Filetype]; found {
+        if ft, found := counter.FileTypeList[target.FileType]; found {
             fileType = ft[0]
         }
 
@@ -126,7 +121,7 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
 			ln = ""
 		}
 
-        body.WriteString(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %s%s   |%s",
+        body.WriteString(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %s%s  |%s",
             i+1,
             space(fmt.Sprint(i+1), largestNumDigit),
             fileType,
@@ -148,7 +143,7 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
 }
 
 func largestsNew(cntResult counter.CntResult) *largests {
-    largestFileType, largestSteps, largestBlanks, largestComments, largestFiles, largestBytes := largest(cntResult, fileTypeList)
+    largestFileType, largestSteps, largestBlanks, largestComments, largestFiles, largestBytes := largest(cntResult, counter.FileTypeList)
     return &largests{
         largestFileType: largestFileType,
         largestSteps: largestSteps,
