@@ -1,9 +1,11 @@
 package view
 
 import (
-    "fmt"
-    "strings"
-    "github.com/suwakei/steps/counter"
+	"fmt"
+	"strings"
+
+	"github.com/fatih/color"
+	"github.com/suwakei/steps/counter"
 )
 
 type largests struct {
@@ -40,9 +42,8 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 
     largests := largestsNew(cntResult)
 
-    roof, header, body, footer := makeTable(cntResult, *largests)
+    header, body, footer := makeTable(cntResult, *largests)
 
-    fmt.Println(roof)
     fmt.Println(header)
     fmt.Println(body)
     fmt.Println(footer)
@@ -60,19 +61,17 @@ func space(currentTarget string, largestLen int) string {
 }
 
 func makeTable(cntResult counter.CntResult, largests largests) (
-    roof string,
     header string,
     body string,
     footer string,
     ) {
+    var lineLen int
     numLen := getNumLen(cntResult)
-    header = makeHeader(largests, numLen)
-    lineLen := len(header)
+    header, lineLen = makeHeader(largests, numLen)
 
-    roof = " " + strings.Repeat("_", lineLen-2)
     body = makeBody(cntResult, largests)
     footer = " " + strings.Repeat("¯", lineLen-2)
-    return roof, header, body, footer
+    return header, body, footer
 }
 
 func getNumLen(cntResult counter.CntResult) int {
@@ -81,7 +80,7 @@ func getNumLen(cntResult counter.CntResult) int {
     return numLen
 }
 
-func makeHeader(largests largests, numLen int) string {
+func makeHeader(largests largests, numLen int) (string, int) {
     var header strings.Builder
 
     header.WriteString(fmt.Sprintf("|%s|  %s%s  |  %s%s  |  %s%s  |  %s%s  |  %s%s  |  %s%s  |",
@@ -99,9 +98,12 @@ func makeHeader(largests largests, numLen int) string {
     "Bytes",
     space("Bytes", largests.largestBytes)),
     )
-    s := header.String()
+    l := header.Len()
+    headerRoof := " " + strings.Repeat("_", l-2)
+    headerContent := header.String()
+    h := headerRoof + "\n" + headerContent
     header.Reset()
-    return s
+    return h, l
 }
 
 func makeBody(cntResult counter.CntResult, largests largests) string {
@@ -115,6 +117,8 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
         target := cntResult.Info[i]
         if ft, found := counter.FileTypeList[target.FileType]; found {
             fileType = ft[0]
+        } else {
+            fileType = target.FileType
         }
 
 		if i+1 == cntResultLen {
@@ -124,7 +128,7 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
         body.WriteString(fmt.Sprintf("|%d%s|  %s%s  |  %d%s  |  %d%s  |  %d%s  |  %d%s  |  %s%s  |%s",
             i+1,
             space(fmt.Sprint(i+1), largestNumDigit),
-            fileType,
+            coloring(fileType, target),
             space(fileType, largests.largestFileType),
             target.Steps,
             space(fmt.Sprint(target.Steps), largests.largestSteps),
@@ -152,4 +156,40 @@ func largestsNew(cntResult counter.CntResult) *largests {
         largestFiles: largestFiles,
         largestBytes: largestBytes,
     }
+}
+
+func coloring(f string, info counter.FileInfo) string {
+    c := info.FileColor
+
+    switch c {
+    case "Red":
+        return color.RedString(f)
+    case "HiRed":
+        return color.HiRedString(f)
+    case "Blue":
+        return color.BlueString(f)
+    case "HiBlue":
+        return color.HiBlueString(f)
+    case "Yellow":
+        return color.YellowString(f)
+    case "HiYellow":
+        return color.HiYellowString(f)
+    case "Green":
+        return color.GreenString(f)
+    case "HiGreen":
+        return color.HiGreenString(f)
+    case "Cyan":
+        return color.CyanString(f)
+    case "HiCyan":
+        return color.HiCyanString(f)
+    case "HiBlack":
+        return color.HiBlackString(f)
+    case "HiWhite":
+        return color.HiWhiteString(f)
+    case "Magenta":
+        return color.MagentaString(f)
+    case "HiMagenta":
+        return color.HiMagentaString(f)
+    }
+    return color.WhiteString(f)
 }

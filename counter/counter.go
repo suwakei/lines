@@ -32,7 +32,7 @@ type CntResult struct {
 }
 
 const (
-	maxCapacity = 64 * 1024
+	maxCapacity = 1024 * 1024
 	concurrencyThreshold = 6
 )
 
@@ -43,7 +43,7 @@ var FileTypeList map[string][]string = map[string][]string{
 	".cc": {"C++(.cc)", "Yellow"},
 	".hpp": {"C++(.hpp)", "Yellow"},
 	".cs": {"C#(.h)", "Cyan"},
-	".html": {"HTML(.html)", "orange"},
+	".html": {"HTML(.html)", "HiYellow"},
 	".css": {"CSS(.css)", "Yellow"},
 	".scss": {"SCSS(.scss)", "Red"},
 	".sass": {"SASS(.sass)", "Red"},
@@ -54,8 +54,9 @@ var FileTypeList map[string][]string = map[string][]string{
 	".ts": {"TypeScript(.ts)", "Blue"},
 	".tsx": {"TSX(.tsx)", "Blue"},
 	".rb": {"Ruby(.rb)", "Red"},
-	".rs": {"Rust(.rs)", "Gray"},
-	".zig": {"Zig(.zig)", "orange"},
+	".kt": {"Kotlin(.kt)", "Green"},
+	".rs": {"Rust(.rs)", "HiBlack"},
+	".zig": {"Zig(.zig)", "HiYellow"},
 	".go": {"Go(.go)", "Blue"},
 	".php": {"PHP(.php)", "Blue"},
 	".xml": {"XML(.xml)", "Blue"},
@@ -63,48 +64,56 @@ var FileTypeList map[string][]string = map[string][]string{
 	".jsonc": {"JSONC File(.jsonc)", "Yellow"},
 	".yaml": {"YAML File(.yaml)", "Magenta"},
 	".yml": {"YAML File(.yml)", "Magenta"},
-	".toml": {"TOML(.toml)", "Gray"},
+	".toml": {"TOML(.toml)", "HiBlack"},
+	"Dockerfile": {"Dockerfile", "Blue"},
+	".dockerfile": {"Dockerfile(.dockerfile)", "Blue"},
+	".Dockerfile": {"Dockerfile(.Dockerfile)", "Blue"},
+	".dockerignore": {"Docker ignore file(.dockerignore)", "Blue"},
+	"Makefile": {"Makefile", "HiRed"},
+	".gitignore": {"Git ignore file(.gitignore)", "HiWhite"},
+	".mod": {"Go modules file(.mod)", "Blue"},
+	".sum": {"Go sum file(.sum)", "Blue"},
+	".mk": {"Makefile(.mk)", "HiRed"},
 	".md": {"Markdown(.md)", "Cyan"},
-	".txt": {"Plain Text(.txt)", "White"},
-	".sql": {"SQL(.sql)", "pink"},
+	".txt": {"Plain Text(.txt)", "HiWhite"},
+	".sql": {"SQL(.sql)", "Pink"},
 	".sh": {"Shell Script(.sh)", "Green"},
 	".bat": {"Batch File(.bat)", "Cyan"},
 	".pl": {"Perl(.pl)", "Cyan"},
-	".swift": {"Swift(.swift)", "orange"},
+	".swift": {"Swift(.swift)", "HiYellow"},
 	".r": {"R(.r)", "Cyan"},
 	".scala": {"Scala(.scala)", "Red"},
-	".kt": {"Kotlin(.kt)", "orange"},
 	".dart": {"Dart(.dart)", "Cyan"},
 	".asm": {"Assembly(.asm)", "Red"},
 	".lua": {"Lua(.lua)", "Cyan"},
 	".clj": {"Clojure(.clj)", "HiGreen"},
 	".coffee": {"CoffeeScript(.coffee)", "Yellow"},
-	".f90": {"Fortran(.f90)", "White"},
+	".f90": {"Fortran(.f90)", "HiWhite"},
 	".groovy": {"Groovy(.groovy)", "Yellow"},
-	".v": {"Verilog(.v)", "White"},
-	".vhdl": {"VHDL(.vhdl)", "White"},
+	".v": {"Verilog(.v)", "HiWhite"},
+	".vhdl": {"VHDL(.vhdl)", "HiWhite"},
 	".d": {"D(.d)", "Red"},
 	".nim": {"Nim(.nim)", "YellowGreen"},
-	".pas": {"Pascal(.pas)", "White"},
-	".tcl": {"Tcl(.tcl)", "White"},
-	".raku": {"Raku(.raku)", "White"},
-	".erl": {"Erlang(.erl)", "White"},
+	".pas": {"Pascal(.pas)", "HiWhite"},
+	".tcl": {"Tcl(.tcl)", "HiWhite"},
+	".raku": {"Raku(.raku)", "HiWhite"},
+	".erl": {"Erlang(.erl)", "HiWhite"},
 	".ex": {"Elixir(.ex)", "Magenta"},
 	".exs": {"Elixir Script(.exs)", "Magenta"},
 	".fs": {"F#(.fs)", "Cyan"},
-	".ml": {"ML(.ml)", "orange"},
+	".ml": {"ML(.ml)", "HiYellow"},
 	".m": {"Objective-C(.m)", "Yellow"},
 	".s": {"Assembly(.s)", "Red"},
-	".xsl": {"XSLT(.xsl)", "White"},
+	".xsl": {"XSLT(.xsl)", "HiWhite"},
 	".less": {"Less(.less)", "Cyan"},
-	".log": {"Log File(.log)", "White"},
-	".ini": {"Initialization File(.ini)", "White"},
-	".cfg": {"Configuration File(.cfg)", "Gray"},
-	".rtf": {"Rich Text Format(.rtf)", "White"},
+	".log": {"Log File(.log)", "HiWhite"},
+	".ini": {"Initialization File(.ini)", "HiWhite"},
+	".cfg": {"Configuration File(.cfg)", "HiBlack"},
+	".rtf": {"Rich Text Format(.rtf)", "HiWhite"},
 	".doc": {"Microsoft Word Document(.doc)", "Cyan"},
 	".docx": {"Microsoft Word Document (Open XML)(.docx)", "Cyan"},
 	".pdf": {"Portable Document Format(.pdf)", "Red"},
-	".epub": {"Electronic Publication(.epub)", "White"},
+	".epub": {"Electronic Publication(.epub)", "HiWhite"},
 }
 
 func Count(files []string, inputPath string) (CntResult, error) {
@@ -226,9 +235,6 @@ func processFile(file string, bufMap map[string]*FileInfo, mu *sync.Mutex) error
 	mu.Lock()
 	defer mu.Unlock()
 	if existingMap, found := bufMap[i.FileType]; found {
-		if existingMap.FileColor == "" {
-			existingMap.FileColor = FileTypeList[existingMap.FileType][1]
-		}
 		existingMap.Steps += i.Steps
 		existingMap.Blanks += i.Blanks
 		existingMap.Comments += i.Comments
@@ -237,6 +243,11 @@ func processFile(file string, bufMap map[string]*FileInfo, mu *sync.Mutex) error
 	} else {
 		bufMap[i.FileType] = &i
 		bufMap[i.FileType].Files += 1
+		if _, typeFound := FileTypeList[i.FileType]; typeFound {
+			bufMap[i.FileType].FileColor = FileTypeList[i.FileType][1]
+		} else {
+			bufMap[i.FileType].FileColor = "White"
+		}
 	}
 	return nil
 }
