@@ -163,31 +163,31 @@ func coloring(f string, info counter.FileInfo) string {
 
     switch c {
     case "Red":
-        return color.RedString(f)
+        return "\033[31m"+f+"\033[0m"
     case "HiRed":
         return color.HiRedString(f)
     case "Blue":
-        return color.BlueString(f)
+        return "\033[34m"+f+"\033[0m"
     case "HiBlue":
         return color.HiBlueString(f)
     case "Yellow":
-        return color.YellowString(f)
+        return "\033[33m"+f+"\033[0m"
     case "HiYellow":
         return color.HiYellowString(f)
     case "Green":
-        return color.GreenString(f)
+        return "\033[32m"+f+"\033[0m"
     case "HiGreen":
-        return color.HiGreenString(f)
+        return "\033[36m"+f+"\033[0m"
     case "Cyan":
         return color.CyanString(f)
     case "HiCyan":
         return color.HiCyanString(f)
     case "HiBlack":
-        return color.HiBlackString(f)
+        return "\033[30m"+f+"\033[0m"
     case "HiWhite":
         return color.HiWhiteString(f)
     case "Magenta":
-        return color.MagentaString(f)
+        return "\033[35m"+f+"\033[0m"
     case "HiMagenta":
         return color.HiMagentaString(f)
     }
