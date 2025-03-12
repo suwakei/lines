@@ -62,8 +62,7 @@ func contains(ignores []string, pathBaseName string) bool {
 func isInvalidFile(pathBaseName string) bool {
 	ext := fp.Ext(pathBaseName)
 	if ext == "" && pathBaseName != "Makefile" && pathBaseName != "Dockerfile" {
-				return true
-			}
+		return true
+	}
 	return false
 }
-

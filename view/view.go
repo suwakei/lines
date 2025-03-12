@@ -6,7 +6,6 @@ import (
 	"github.com/suwakei/steps/counter"
 )
 
-
 func Write(cntResult counter.CntResult, distPaths []string, ignoreListMap map[string][]string) {
 	pathsLen := len(distPaths)
 	if pathsLen == 0 {
@@ -21,7 +20,7 @@ func largest(cntResult counter.CntResult, fileTypeList map[string][]string) (
 	largestComments int,
 	largestFiles int,
 	largestBytes int,
-	) {
+) {
 	var fileTypeNum int
 	largestFileType = len("FileType")
 	largestSteps = len("Steps")
@@ -67,5 +66,5 @@ func largest(cntResult counter.CntResult, fileTypeList map[string][]string) (
 			largestBytes = bytesNum
 		}
 	}
-	return 
+	return
 }

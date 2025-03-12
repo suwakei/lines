@@ -1,11 +1,10 @@
 package pathHandler
 
 import (
-	"os"
 	"fmt"
+	"os"
 	fp "path/filepath"
 )
-
 
 func Parse(path string) (string, error) {
 	absPath, err := fp.Abs(path)

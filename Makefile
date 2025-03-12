@@ -9,14 +9,19 @@ all:
 
 # add -race option
 build:
-	@echo "[info *****************build***********************]""
+	@echo "[INFO] *****************build***********************"
 	@go build -ldflags="-s -w" -trimpath -o ./bin/steps.exe
 
 test:
+	@echo "[INFO] *****************test***********************"
 	@go test -v .
 
+ben:
+	@echo "[INFO] *****************benchmark**********************"
+	@go test -bench=. -benchmem
+
 fmt:
-	@echo "[info ***********************formatting****************************]"
+	@echo "[INFO] ***********************formatting****************************"
 	@go fmt ./...
 
 clean:

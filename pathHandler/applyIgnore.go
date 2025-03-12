@@ -1,13 +1,13 @@
 package pathHandler
 
 import (
-	"os"
-	"fmt"
 	"bufio"
+	"fmt"
+	"os"
 	"strings"
 )
 
-func MakeIgnoreList[eOri string | []string] (ignores eOri) (map[string][]string, error) {
+func MakeIgnoreList[eOri string | []string](ignores eOri) (map[string][]string, error) {
 	ignoreListMap := make(map[string][]string, 2)
 
 	switch v := any(ignores).(type) {
