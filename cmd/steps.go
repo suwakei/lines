@@ -11,7 +11,7 @@ import (
 	"github.com/suwakei/steps/view"
 )
 
-const VERSION string = "0.1.0"
+const VERSION string = "1.0.0"
 
 var (
 	rootCmd = &cobra.Command{
@@ -33,6 +33,7 @@ var (
 				fmt.Println("[ERROR]: no path input!")
 				return
 			}
+
 			inputPath, err := pathHandler.Parse(args[0])
 			if err != nil {
 				fmt.Println("[ERROR]: failed to parse input path!\n", err)
@@ -97,6 +98,7 @@ var (
 			}
 
 			files, err := pathHandler.Search(inputPath, ignoreListMap)
+			fmt.Println(files)
 			if err != nil {
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return

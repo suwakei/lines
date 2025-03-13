@@ -38,7 +38,6 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 
 	fmt.Println("")
 	fmt.Println("")
-	fmt.Println(cntResult.Info)
 
 	largests := largestsNew(cntResult)
 
@@ -143,7 +142,9 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
 			ln,
 		))
 	}
-	return body.String()
+	s := body.String()
+	body.Reset()
+	return s
 }
 
 func largestsNew(cntResult counter.CntResult) *largests {
