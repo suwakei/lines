@@ -47,11 +47,11 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 	return files, nil
 }
 
+var ignoreSet map[string]struct{} = make(map[string]struct{})
 func contains(ignores []string, pathBaseName string) bool {
 	if ignores == nil {
 		return false
 	}
-	ignoreSet := make(map[string]struct{})
 	for _, ignore := range ignores {
 		ignoreSet[ignore] = struct{}{}
 	}
