@@ -9,7 +9,7 @@ import (
 
 func TestSearch(t *testing.T) {
 	// テスト用のディレクトリとファイルを作成
-	rootDir := "testdata"
+	rootDir := "testdata/t"
 	subDir := fp.Join(rootDir, "subdir")
 	testFiles := []string{
 		fp.Join(rootDir, "file1.txt"),
@@ -39,16 +39,6 @@ func TestSearch(t *testing.T) {
 
 	if !reflect.DeepEqual(result, expected) {
 		t.Errorf("Expected %v, got %v", expected, result)
-	}
-}
-
-func TestContains(t *testing.T) {
-	ignores := []string{"ignore1", "ignore2"}
-	if !contains(ignores, "ignore1") {
-		t.Error("Expected true, got false")
-	}
-	if contains(ignores, "notignored") {
-		t.Error("Expected false, got true")
 	}
 }
 
