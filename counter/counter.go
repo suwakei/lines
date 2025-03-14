@@ -32,7 +32,7 @@ type CntResult struct {
 }
 
 const (
-	maxCapacity          = 1024 * 1024
+	maxCapacity          = 10 * 1024 * 1024 // 10MB
 	concurrencyThreshold = 6
 )
 
