@@ -3,6 +3,7 @@ package pathHandler
 import (
 	"io/fs"
 	fp "path/filepath"
+	"slices"
 )
 
 func Search(path string, ignores map[string][]string) ([]string, error) {
@@ -13,26 +14,24 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 		return nil, err
 	}
 
+
 	err = fp.WalkDir(parsedPath, func(path string, d fs.DirEntry, err error) error {
-		pathBaseName := fp.Base(path)
 		if err != nil {
 			return err
 		}
 
 		if d.IsDir() {
-			if contains(ignores["dir"], pathBaseName) {
+			if contains(path, ignores["dir"]) {
 				return fp.SkipDir
 			}
 			return nil
 		}
 
-		if !d.IsDir() {
-			if contains(ignores["file"], pathBaseName) {
-				return nil
-			}
+		if !d.IsDir() && isInvalidFile(path) {
+			return nil
 		}
 
-		if isInvalidFile(pathBaseName) {
+		if !d.IsDir() && contains(path, ignores["file"]) {
 			return nil
 		}
 
@@ -47,21 +46,19 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 	return files, nil
 }
 
-var ignoreSet map[string]struct{} = make(map[string]struct{})
-func contains(ignores []string, pathBaseName string) bool {
-	if ignores == nil {
+
+func contains(path string, ignores []string) bool {
+	pathExt := fp.Ext(path)
+	if pathExt == "" {
 		return false
 	}
-	for _, ignore := range ignores {
-		ignoreSet[ignore] = struct{}{}
-	}
-	_, exist := ignoreSet[pathBaseName]
-	return exist
+	return slices.Contains(ignores, pathExt)
 }
 
-func isInvalidFile(pathBaseName string) bool {
-	ext := fp.Ext(pathBaseName)
-	if ext == "" && pathBaseName != "Makefile" && pathBaseName != "Dockerfile" {
+func isInvalidFile(path string) bool {
+	pathBase := fp.Base(path)
+	ext := fp.Ext(path)
+	if ext == "" && pathBase != "Makefile" && pathBase != "Dockerfile" {
 		return true
 	}
 	return false

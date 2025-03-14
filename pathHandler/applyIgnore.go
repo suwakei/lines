@@ -7,14 +7,14 @@ import (
 	"strings"
 )
 
-func MakeIgnoreList[eOri string | []string](ignores eOri) (map[string][]string, error) {
+func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]string, error) {
 	ignoreListMap := make(map[string][]string, 2)
 
-	switch v := any(ignores).(type) {
+	switch v := any(ignoreFile).(type) {
 	case string:
 		if v == "" {
-			ignoreListMap["file"] = []string{}
-			ignoreListMap["dir"] = []string{}
+			ignoreListMap["file"] = nil
+			ignoreListMap["dir"] = nil
 			return ignoreListMap, nil
 		}
 
