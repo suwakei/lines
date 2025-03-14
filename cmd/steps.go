@@ -98,7 +98,7 @@ var (
 			}
 
 			files, err := pathHandler.Search(inputPath, ignoreListMap)
-			fmt.Println(files)
+
 			if err != nil {
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return
