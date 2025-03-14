@@ -53,7 +53,7 @@ var (
 					".dylib",
 					".xls",
 					".xlsx",
-					"xlsm",
+					".xlsm",
 					".pdf",
 					".doc",
 					".docx",
@@ -135,7 +135,7 @@ func Execute() {
 func init() {
 	rootCmd.Flags().BoolP("version", "v", false, "Print version of this app")
 	rootCmd.Flags().StringSliceP("dist", "d", []string{}, "input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt]")
-	rootCmd.Flags().StringP("only", "o", "", "By specifying an extension or file name, only files with that extension or name are targeted. \"-o=*.go\" or \"-o *.go\" or \"-o=test.txt\"")
+	rootCmd.Flags().StringP("only", "o", "", "By specifying an extension or file name, only files with that extension or name are targeted. \"-o=.go\" or \"-o .go\" or \"-o=test.txt\"")
 	rootCmd.Flags().StringP("ignore", "i", "", "input your .gitignore file path. ignore extentions in .gitignore file. (default: .gitignore)")
-	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=test.json, *.js, *.go\" or \"-e=test.json -e=*.js -e=*.go\". (default: *.exe, *.com, *.dll, *.so, *.dylib, *.xls, *.xlsx, *.pdf, *.doc, *.docx, *.ppt, *.pptx)")
+	rootCmd.Flags().StringSliceP("ext", "e", []string{}, "input extension you don't want to count \"-e=test.json, .js, .go\" or \"-e=test.json -e=.js -e=.go\". (default: .exe, .com, .dll, .so, .dylib, .xls, .xlsx, .pdf, .doc, .docx, .ppt, .pptx)")
 }
