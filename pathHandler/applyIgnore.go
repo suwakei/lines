@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	fp "path/filepath"
 )
 
 func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]string, error) {
@@ -78,6 +79,11 @@ func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]strin
 }
 
 func IsFile(path string) bool {
+	base := fp.Base(path)
+	if string(base[0]) == "." || string(base[0]) == "*" {
+		return true
+	}
+
 	info, err := os.Stat(path)
 	if err != nil {
 		return false
