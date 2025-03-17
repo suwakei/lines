@@ -55,7 +55,7 @@ func contains(pathBase string, ignores []string) bool {
 	}
 	return slices.Contains(ignores, pathExt)
 }
-
+// is
 func isInvalidFile(pathBase string) bool {
 	ext := fp.Ext(pathBase)
 	if ext == "" && pathBase != "Makefile" && pathBase != "Dockerfile" {
