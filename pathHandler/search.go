@@ -16,22 +16,23 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 
 
 	err = fp.WalkDir(parsedPath, func(path string, d fs.DirEntry, err error) error {
+		pathBase := fp.Base(path)
 		if err != nil {
 			return err
 		}
 
 		if d.IsDir() {
-			if contains(path, ignores["dir"]) {
+			if contains(pathBase, ignores["dir"]) {
 				return fp.SkipDir
 			}
 			return nil
 		}
 
-		if !d.IsDir() && isInvalidFile(path) {
+		if !d.IsDir() && isInvalidFile(pathBase) {
 			return nil
 		}
 
-		if !d.IsDir() && contains(path, ignores["file"]) {
+		if !d.IsDir() && contains(pathBase, ignores["file"]) {
 			return nil
 		}
 
@@ -47,17 +48,16 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 }
 
 
-func contains(path string, ignores []string) bool {
-	pathExt := fp.Ext(path)
+func contains(pathBase string, ignores []string) bool {
+	pathExt := fp.Ext(pathBase)
 	if pathExt == "" {
-		return false
+		return slices.Contains(ignores, pathBase)
 	}
 	return slices.Contains(ignores, pathExt)
 }
 
-func isInvalidFile(path string) bool {
-	pathBase := fp.Base(path)
-	ext := fp.Ext(path)
+func isInvalidFile(pathBase string) bool {
+	ext := fp.Ext(pathBase)
 	if ext == "" && pathBase != "Makefile" && pathBase != "Dockerfile" {
 		return true
 	}
