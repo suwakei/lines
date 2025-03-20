@@ -1,4 +1,4 @@
-Target abs path: C:\Users\ns072\OneDrive\ドキュメント\Github\steps
+Target abs path: C:\**\steps
 All steps: 5000
 All blanks: 1000
 All comments: 2000

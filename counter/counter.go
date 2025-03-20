@@ -70,6 +70,7 @@ var FileTypeList map[string][]string = map[string][]string{
 	".Dockerfile":   {"Dockerfile(.Dockerfile)", "HiBlue"},
 	".dockerignore": {"Docker ignore file(.dockerignore)", "HiBlue"},
 	"Makefile":      {"Makefile", "HiRed"},
+	"LICENSE":       {"LICENSE File", "Yellow"},
 	".gitignore":    {"Git ignore file(.gitignore)", "HiWhite"},
 	".mod":          {"Go modules file(.mod)", "Blue"},
 	".sum":          {"Go sum file(.sum)", "Blue"},

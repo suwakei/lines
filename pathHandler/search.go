@@ -14,7 +14,6 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 		return nil, err
 	}
 
-
 	err = fp.WalkDir(parsedPath, func(path string, d fs.DirEntry, err error) error {
 		pathBase := fp.Base(path)
 		if err != nil {
@@ -47,7 +46,6 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 	return files, nil
 }
 
-
 func contains(pathBase string, ignores []string) bool {
 	pathExt := fp.Ext(pathBase)
 	if pathExt == "" {
@@ -55,10 +53,11 @@ func contains(pathBase string, ignores []string) bool {
 	}
 	return slices.Contains(ignores, pathExt)
 }
+
 // is
 func isInvalidFile(pathBase string) bool {
 	ext := fp.Ext(pathBase)
-	if ext == "" && pathBase != "Makefile" && pathBase != "Dockerfile" {
+	if ext == "" && pathBase != "Makefile" && pathBase != "Dockerfile" && pathBase != "LICENSE" {
 		return true
 	}
 	return false

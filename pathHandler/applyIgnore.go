@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 	fp "path/filepath"
+	"strings"
 )
 
 func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]string, error) {
