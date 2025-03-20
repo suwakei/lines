@@ -10,12 +10,6 @@ defaults:
   run:
     shell: bash
 
-env:
-  SLACK_USERNAME: ci failure notification
-  SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
-  SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-
 jobs:
   build:
     strategy:
@@ -36,14 +30,6 @@ jobs:
 
       - name: Go Build
         run: go build -v main.go
-
-      - name: Slack Failure Notification on Build
-        uses: rtCamp/action-slack-notify@v2
-        if: ${{ failure() }}
-        env:
-          SLACK_TITLE: steps commit name "${{github.event.head_commit.message}}"
-          SLACK_COLOR: danger
-          SLACK_MESSAGE: steps build failed!!!
 
   test:
     needs: build
@@ -67,17 +53,6 @@ jobs:
       - name: Go Test
         run: go test -v .
 
-      - name: Go Benchmark
-        run:  go test -bench . -benchmem
-
-      - name: Slack Failure Notification test 
-        uses: rtCamp/action-slack-notify@v2
-        if: ${{ failure() }}
-        env:
-            SLACK_TITLE: steps commit name "${{github.event.head_commit.message}}"
-            SLACK_COLOR: danger
-            SLACK_MESSAGE: steps test failed!!!
-
   benchmark:
     needs: build
 
@@ -99,11 +74,3 @@ jobs:
 
       - name: Go Benchmark
         run:  go test -bench . -benchmem
-
-      - name: Slack Failure Notification benchmark
-        uses: rtCamp/action-slack-notify@v2
-        if: ${{ failure() }}
-        env:
-            SLACK_TITLE: steps commit name "${{github.event.head_commit.message}}"
-            SLACK_COLOR: danger
-            SLACK_MESSAGE: steps benchmark failed!!
