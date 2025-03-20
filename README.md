@@ -1,4 +1,5 @@
-![image-logo](./view/img-logo.png)
+<img src="./view/img-logo.png" alt="image-logo" width="700px" height="400px">
+
 # steps
 
 [![Build Status](https://github.com/suwakei/steps/actions/workflows/ci.yml/badge.svg)](https://github.com/suwakei/steps/actions/workflows/ci.yml)
