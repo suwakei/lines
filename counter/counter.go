@@ -13,7 +13,7 @@ import (
 type FileInfo struct {
 	FileType  string
 	FileColor string
-	Steps     int
+	Lines     int
 	Blanks    int
 	Comments  int
 	Files     int
@@ -24,7 +24,7 @@ type FileInfo struct {
 type CntResult struct {
 	Info        []FileInfo
 	InputPath   string
-	TotalSteps    int
+	TotalLines    int
 	TotalBlanks   int
 	TotalComments int
 	TotalFiles    int
@@ -186,7 +186,7 @@ func count(file string) (FileInfo, error) {
 
 	var inBlockComment bool = false
 	for scanner.Scan() {
-		info.Steps++
+		info.Lines++
 		line := strings.TrimSpace(scanner.Text())
 		info.bytesBuf += len(line) + 1 // +1 for the newline character
 
@@ -237,7 +237,7 @@ func processFile(file string, bufMap map[string]*FileInfo, mu *sync.Mutex) error
 	mu.Lock()
 	defer mu.Unlock()
 	if existingMap, found := bufMap[i.FileType]; found {
-		existingMap.Steps += i.Steps
+		existingMap.Lines += i.Lines
 		existingMap.Blanks += i.Blanks
 		existingMap.Comments += i.Comments
 		existingMap.bytesBuf += i.bytesBuf
@@ -266,7 +266,7 @@ func retFileType(file string) string {
 func (r *CntResult) assignTotals() {
 	var TotalBytesBuf int
 	for _, i := range r.Info {
-		r.TotalSteps += i.Steps
+		r.TotalLines += i.Lines
 		r.TotalBlanks += i.Blanks
 		r.TotalComments += i.Comments
 		r.TotalFiles += i.Files

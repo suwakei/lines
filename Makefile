@@ -10,7 +10,7 @@ all:
 # add -race option
 build:
 	@echo "[INFO] *****************build***********************"
-	@go build -ldflags="-s -w" -trimpath -o ./bin/steps.exe
+	@go build -ldflags="-s -w" -trimpath -o ./bin/lines.exe
 
 test:
 	@echo "[INFO] *****************test***********************"

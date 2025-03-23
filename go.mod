@@ -1,4 +1,4 @@
-module github.com/suwakei/steps
+module github.com/suwakei/lines
 
 go 1.23.0
 

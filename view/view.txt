@@ -1,13 +1,14 @@
-Target abs path: C:\**\steps
-All steps: 5000
+Target abs path: C:\**\lines
+All lines: 5000
 All blanks: 1000
 All comments: 2000
 All files: 100
 All bytes: 1000B
+Time: 100ms
 ignore files: [*.txt, *.md, *.json]
 
  _______________________________________________________________
-|###|File type| Steps  |Blanks|Comments|Files|    Bytes         |
+|###|File type| Lines  |Blanks|Comments|Files|    Bytes         |
 |---------------------------------------------------------------|
 |1  |  Go     | 17438  | 3899 | 490    | 28  | 198983(198.983KB)|
 |2  |  Kotlin | 800    | 900  | 1000   | 10  | 100000(100KB)    |

@@ -3,7 +3,7 @@ package view
 import (
 	"fmt"
 
-	"github.com/suwakei/steps/counter"
+	"github.com/suwakei/lines/counter"
 )
 
 func Write(cntResult counter.CntResult, distPaths []string, ignoreListMap map[string][]string) {
@@ -15,7 +15,7 @@ func Write(cntResult counter.CntResult, distPaths []string, ignoreListMap map[st
 
 func largest(cntResult counter.CntResult, fileTypeList map[string][]string) (
 	largestFileType int,
-	largestSteps int,
+	largestLines int,
 	largestBlanks int,
 	largestComments int,
 	largestFiles int,
@@ -23,7 +23,7 @@ func largest(cntResult counter.CntResult, fileTypeList map[string][]string) (
 ) {
 	var fileTypeNum int
 	largestFileType = len("FileType")
-	largestSteps = len("Steps")
+	largestLines = len("Lines")
 	largestBlanks = len("Blanks")
 	largestComments = len("Comments")
 	largestFiles = len("Files")
@@ -36,7 +36,7 @@ func largest(cntResult counter.CntResult, fileTypeList map[string][]string) (
 			fileTypeNum = len(fmt.Sprint(i.FileType))
 		}
 
-		stepsNum := len(fmt.Sprint(i.Steps))
+		linesNum := len(fmt.Sprint(i.Lines))
 		blanksNum := len(fmt.Sprint(i.Blanks))
 		commentsNum := len(fmt.Sprint(i.Comments))
 		filesNum := len(fmt.Sprint(i.Files))
@@ -46,8 +46,8 @@ func largest(cntResult counter.CntResult, fileTypeList map[string][]string) (
 			largestFileType = fileTypeNum
 		}
 
-		if largestSteps < stepsNum {
-			largestSteps = stepsNum
+		if largestLines < linesNum {
+			largestLines = linesNum
 		}
 
 		if largestBlanks < blanksNum {

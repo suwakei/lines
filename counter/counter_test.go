@@ -29,7 +29,7 @@ func BenchmarkCount(b *testing.B) {
 
 func TestCount(t *testing.T) {
 	inputPath := "../testdata/dummy"
-	expectedSteps := 39
+	expectedLines := 39
 	expectedBlanks := 4
 	expectedComments := 1
 	expectedBytes := "1600(1KB)"
@@ -39,8 +39,8 @@ func TestCount(t *testing.T) {
 		t.Fatalf("Count failed: %v", err)
 	}
 
-	if result.TotalSteps != expectedSteps {
-		t.Errorf("expected %d steps, got %d", expectedSteps, result.TotalSteps)
+	if result.TotalLines != expectedLines {
+		t.Errorf("expected %d lines, got %d", expectedLines, result.TotalLines)
 	}
 	if result.TotalBlanks != expectedBlanks {
 		t.Errorf("expected %d blanks, got %d", expectedBlanks, result.TotalBlanks)

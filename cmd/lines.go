@@ -6,18 +6,18 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/suwakei/steps/counter"
-	"github.com/suwakei/steps/pathHandler"
-	"github.com/suwakei/steps/view"
+	"github.com/suwakei/lines/counter"
+	"github.com/suwakei/lines/pathHandler"
+	"github.com/suwakei/lines/view"
 )
 
 const VERSION string = "1.0.0"
 
 var (
 	rootCmd = &cobra.Command{
-		Use:   "steps [PATH] [OPTIONS]",
-		Short: "steps counts the number of lines of dir or file that you input.",
-		Long: `steps counts the number of lines of dir or file that you input.
+		Use:   "lines [PATH] [OPTIONS]",
+		Short: "lines counts the number of lines of dir or file that you input.",
+		Long: `lines counts the number of lines of dir or file that you input.
 		also this app can output result in [.json, .jsonc, .yml, .yaml, .toml, .txt] format
 		and also can ignore only particular file of extension with input your .gitignore file.
 		and so on ... please see flags help for more information.

@@ -1,12 +1,12 @@
 <img src="./view/img-logo.png" alt="image-logo" width="700px" height="400px">
 
-# steps
+# lines
 
 [![Build Status](https://github.com/suwakei/steps/actions/workflows/ci.yml/badge.svg)](https://github.com/suwakei/steps/actions/workflows/ci.yml)
 [![Lint Status](https://github.com/suwakei/steps/actions/workflows/lint.yml/badge.svg)](https://github.com/suwakei/steps/actions/workflows/lint.yml)
 
 ## Overview
-steps is a CLI application that counts the number of lines, blanks, etc. in the file of the input path and outputs them.
+steps is a CLI application that counts the number of lines, blanks, comments, files, bytes. in the file of the input path and outputs them.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -18,7 +18,7 @@ steps is a CLI application that counts the number of lines, blanks, etc. in the 
     - [Supported Options](#supported-options)
 
 ## Example
-<img src="./view/example.png" alt="image-logo" width="800px" height="350px">
+<img src="./view/e.png" alt="example-image" width="800px" height="350px">
 
 ## Features
 

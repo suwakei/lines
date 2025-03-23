@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/suwakei/steps/counter"
+	"github.com/suwakei/lines/counter"
 )
 
 type largests struct {
 	largestFileType int
-	largestSteps    int
+	largestLines    int
 	largestBlanks   int
 	largestComments int
 	largestFiles    int
@@ -19,7 +19,7 @@ type largests struct {
 
 func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) {
 	fmt.Println("Target Abs Path: ", cntResult.InputPath)
-	fmt.Println("All Steps: ", cntResult.TotalSteps)
+	fmt.Println("Total Lines: ", cntResult.TotalLines)
 	fmt.Println("Total Blanks: ", cntResult.TotalBlanks)
 	fmt.Println("Total Comments: ", cntResult.TotalComments)
 	fmt.Println("Total Files: ", cntResult.TotalFiles)
@@ -86,8 +86,8 @@ func makeHeader(largests largests, numLen int) (string, int) {
 		strings.Repeat("#", numLen),
 		"FileType",
 		space("FileType", largests.largestFileType),
-		"Steps",
-		space("Steps", largests.largestSteps),
+		"Lines",
+		space("Lines", largests.largestLines),
 		"Blanks",
 		space("Blanks", largests.largestBlanks),
 		"Comments",
@@ -129,8 +129,8 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
 			space(fmt.Sprint(i+1), largestNumDigit),
 			coloring(fileType, target),
 			space(fileType, largests.largestFileType),
-			target.Steps,
-			space(fmt.Sprint(target.Steps), largests.largestSteps),
+			target.Lines,
+			space(fmt.Sprint(target.Lines), largests.largestLines),
 			target.Blanks,
 			space(fmt.Sprint(target.Blanks), largests.largestBlanks),
 			target.Comments,
@@ -148,10 +148,10 @@ func makeBody(cntResult counter.CntResult, largests largests) string {
 }
 
 func largestsNew(cntResult counter.CntResult) *largests {
-	largestFileType, largestSteps, largestBlanks, largestComments, largestFiles, largestBytes := largest(cntResult, counter.FileTypeList)
+	largestFileType, largestLines, largestBlanks, largestComments, largestFiles, largestBytes := largest(cntResult, counter.FileTypeList)
 	return &largests{
 		largestFileType: largestFileType,
-		largestSteps:    largestSteps,
+		largestLines:    largestLines,
 		largestBlanks:   largestBlanks,
 		largestComments: largestComments,
 		largestFiles:    largestFiles,
