@@ -15,7 +15,7 @@ steps is a CLI application that counts the number of lines, blanks, etc. in the 
 
 ## Example
 
-```bash
+```html
 Target Abs Path:  C:\work\steps\testdata\stepstest
 All Steps:  62
 All Blanks:  11
@@ -26,13 +26,13 @@ All ignore files:  [.exe .com .dll .so .dylib .xls .xlsx .xlsm .pdf .doc .docx .
 All ignore dirs:  None
 
 
- ________________________________________________________________________________
+________________________________________________________________________________
 |#|  FileType          |  Steps  |  Blanks  |  Comments  |  Files  |  Bytes      |
 |1|  Go(.go)           |  9      |  3       |  5         |  1      |  42(0KB)    |
 |2|  Plain Text(.txt)  |  28     |  1       |  0         |  1      |  1512(1KB)  |
 |3|  Dockerfile        |  1      |  0       |  0         |  1      |  15(0KB)    |
-|4|  <span style="color: red; ">Makefile</span>          |  24     |  7       |  1         |  1      |  379(0KB)   |
- ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+|4|  <span style="color: red;">Makefile</span>          |  24     |  7       |  1         |  1      |  379(0KB)   |
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 ```
 
 ## Features
