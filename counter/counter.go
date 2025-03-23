@@ -24,11 +24,11 @@ type FileInfo struct {
 type CntResult struct {
 	Info        []FileInfo
 	InputPath   string
-	AllSteps    int
-	AllBlanks   int
-	AllComments int
-	AllFiles    int
-	AllBytes    string
+	TotalSteps    int
+	TotalBlanks   int
+	TotalComments int
+	TotalFiles    int
+	TotalBytes    string
 }
 
 const (
@@ -39,6 +39,7 @@ const (
 var FileTypeList map[string][]string = map[string][]string{
 	".asm":          {"Assembly(.asm)", "Red"},
 	".bat":          {"Batch File(.bat)", "Cyan"},
+	".bash":         {"BASH(.bash)", "HiGreen"},
 	".c":            {"C(.c)", "Yellow"},
 	".cc":           {"C++(.cc)", "Yellow"},
 	".cs":           {"C#(.h)", "Cyan"},
@@ -164,7 +165,7 @@ func Count(files []string, inputPath string) (CntResult, error) {
 		m.Bytes = fmt.Sprintf("%d(%dKB)", m.bytesBuf, b2kb(m.bytesBuf))
 		result.Info = append(result.Info, *m)
 	}
-	result.assignAlls()
+	result.assignTotals()
 	return result, nil
 }
 
@@ -262,16 +263,16 @@ func retFileType(file string) string {
 	}
 }
 
-func (r *CntResult) assignAlls() {
-	var AllBytesBuf int
+func (r *CntResult) assignTotals() {
+	var TotalBytesBuf int
 	for _, i := range r.Info {
-		r.AllSteps += i.Steps
-		r.AllBlanks += i.Blanks
-		r.AllComments += i.Comments
-		r.AllFiles += i.Files
-		AllBytesBuf += i.bytesBuf
+		r.TotalSteps += i.Steps
+		r.TotalBlanks += i.Blanks
+		r.TotalComments += i.Comments
+		r.TotalFiles += i.Files
+		TotalBytesBuf += i.bytesBuf
 	}
-	r.AllBytes = fmt.Sprintf("%d(%dKB)", AllBytesBuf, b2kb(AllBytesBuf))
+	r.TotalBytes = fmt.Sprintf("%d(%dKB)", TotalBytesBuf, b2kb(TotalBytesBuf))
 }
 
 // Efficiency of searching comment prefixes from O(n) to O(1)

@@ -39,17 +39,17 @@ func TestCount(t *testing.T) {
 		t.Fatalf("Count failed: %v", err)
 	}
 
-	if result.AllSteps != expectedSteps {
-		t.Errorf("expected %d steps, got %d", expectedSteps, result.AllSteps)
+	if result.TotalSteps != expectedSteps {
+		t.Errorf("expected %d steps, got %d", expectedSteps, result.TotalSteps)
 	}
-	if result.AllBlanks != expectedBlanks {
-		t.Errorf("expected %d blanks, got %d", expectedBlanks, result.AllBlanks)
+	if result.TotalBlanks != expectedBlanks {
+		t.Errorf("expected %d blanks, got %d", expectedBlanks, result.TotalBlanks)
 	}
-	if result.AllComments != expectedComments {
-		t.Errorf("expected %d comments, got %d", expectedComments, result.AllComments)
+	if result.TotalComments != expectedComments {
+		t.Errorf("expected %d comments, got %d", expectedComments, result.TotalComments)
 	}
-	if result.AllBytes != expectedBytes {
-		t.Errorf("expected %s bytes, got %s", expectedBytes, result.AllBytes)
+	if result.TotalBytes != expectedBytes {
+		t.Errorf("expected %s bytes, got %s", expectedBytes, result.TotalBytes)
 	}
 }
 
