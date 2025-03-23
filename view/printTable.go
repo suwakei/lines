@@ -19,11 +19,11 @@ type largests struct {
 
 func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) {
 	fmt.Println("Target Abs Path: ", cntResult.InputPath)
-	fmt.Println("All Steps: ", cntResult.AllSteps)
-	fmt.Println("All Blanks: ", cntResult.AllBlanks)
-	fmt.Println("All Comments: ", cntResult.AllComments)
-	fmt.Println("All Files: ", cntResult.AllFiles)
-	fmt.Printf("All Bytes: %s\n", cntResult.AllBytes)
+	fmt.Println("All Steps: ", cntResult.TotalSteps)
+	fmt.Println("Total Blanks: ", cntResult.TotalBlanks)
+	fmt.Println("Total Comments: ", cntResult.TotalComments)
+	fmt.Println("Total Files: ", cntResult.TotalFiles)
+	fmt.Printf("Total Bytes: %s\n", cntResult.TotalBytes)
 	if len(ignoreListMap["file"]) != 0 {
 		fmt.Println("All ignore files: ", ignoreListMap["file"])
 	} else {
