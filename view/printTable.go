@@ -17,27 +17,61 @@ type largests struct {
 	largestBytes    int
 }
 
-func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) {
-	fmt.Println("Target Abs Path: ", cntResult.InputPath)
-	fmt.Println("Total Lines: ", cntResult.TotalLines)
-	fmt.Println("Total Blanks: ", cntResult.TotalBlanks)
-	fmt.Println("Total Comments: ", cntResult.TotalComments)
-	fmt.Println("Total Files: ", cntResult.TotalFiles)
-	fmt.Printf("Total Bytes: %s\n", cntResult.TotalBytes)
+func RetTotals(cntResult counter.CntResult, ignoreListMap map[string][]string) (
+	map[string]string,
+	map[string][]string,
+	) {
+	var (
+		AllIgnoreFiles []string
+		AllIgnoreDirs []string
+	)
 	if len(ignoreListMap["file"]) != 0 {
-		fmt.Println("All ignore files: ", ignoreListMap["file"])
+		AllIgnoreFiles = ignoreListMap["file"]
 	} else {
-		fmt.Println("All ignore files: ", "None")
+		AllIgnoreFiles = nil
 	}
 
 	if len(ignoreListMap["dir"]) != 0 {
-		fmt.Println("All ignore dirs: ", ignoreListMap["dir"])
+		AllIgnoreDirs = ignoreListMap["dir"]
 	} else {
-		fmt.Println("All ignore dirs: ", "None")
+		AllIgnoreDirs = nil
 	}
 
-	fmt.Println("")
-	fmt.Println("")
+	totalMap := make(map[string]string, 8)
+	ignoreMap := make(map[string][]string, 2)
+	totalMap = map[string]string{
+		"Target Abs Path: ": cntResult.InputPath,
+		"Total Lines: ": fmt.Sprint(cntResult.TotalLines),
+		"Total Blanks: ": fmt.Sprint(cntResult.TotalBlanks),
+		"Total Comments: ": fmt.Sprint(cntResult.TotalComments),
+		"Total Files: ": fmt.Sprint(cntResult.TotalFiles),
+		"Total Bytes: ": fmt.Sprint(cntResult.TotalBytes),
+	}
+
+	ignoreMap = map[string][]string {
+		"All ignore files: ": AllIgnoreFiles,
+		"All ignore dirs: ": AllIgnoreDirs,
+	}
+
+	return totalMap, ignoreMap
+}
+
+func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) {
+	totals, allIgnores := RetTotals(cntResult, ignoreListMap)
+
+	for k, v := range totals {
+		fmt.Println(k, v)
+	}
+
+	for k, v := range allIgnores {
+		if v == nil {
+			fmt.Println(k, "none")
+		} else {
+			fmt.Println(k, v)
+		}
+	}
+
+	fmt.Print("\n\n")
 
 	largests := largestsNew(cntResult)
 
@@ -71,12 +105,6 @@ func makeTable(cntResult counter.CntResult, largests largests) (
 	body = makeBody(cntResult, largests)
 	footer = " " + strings.Repeat("¯", lineLen-2)
 	return header, body, footer
-}
-
-func getNumLen(cntResult counter.CntResult) int {
-	num := len(cntResult.Info)
-	numLen := len(fmt.Sprint(num))
-	return numLen
 }
 
 func makeHeader(largests largests, numLen int) (string, int) {
@@ -193,4 +221,10 @@ func coloring(f string, info counter.FileInfo) string {
 		return color.HiMagentaString(f)
 	}
 	return color.WhiteString(f)
+}
+
+func getNumLen(cntResult counter.CntResult) int {
+	num := len(cntResult.Info)
+	numLen := len(fmt.Sprint(num))
+	return numLen
 }

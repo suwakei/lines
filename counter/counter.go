@@ -114,7 +114,7 @@ var FileTypeList map[string][]string = map[string][]string{
 	".xsl":          {"XSLT(.xsl)", "HiWhite"},
 	".yml":          {"YAML File(.yml)", "Magenta"},
 	".yaml":         {"YAML File(.yaml)", "Magenta"},
-	"zsh":           {"ZSH", "Green"},
+	".zsh":           {"ZSH", "Green"},
 	".zig":          {"Zig(.zig)", "HiYellow"},
 }
 
@@ -195,11 +195,6 @@ func count(file string) (FileInfo, error) {
 			continue
 		}
 
-		if isSingleComment(line) {
-			info.Comments++
-			continue
-		}
-
 		if isBeginBlockComments(line) {
 			inBlockComment = true
 			info.Comments++
@@ -211,6 +206,11 @@ func count(file string) (FileInfo, error) {
 			if isEndBlockComments(line) {
 				inBlockComment = false
 			}
+		}
+
+		if isSingleComment(line) {
+			info.Comments++
+			continue
 		}
 	}
 
@@ -240,8 +240,8 @@ func processFile(file string, bufMap map[string]*FileInfo, mu *sync.Mutex) error
 		existingMap.Lines += i.Lines
 		existingMap.Blanks += i.Blanks
 		existingMap.Comments += i.Comments
-		existingMap.bytesBuf += i.bytesBuf
 		existingMap.Files += 1
+		existingMap.bytesBuf += i.bytesBuf
 	} else {
 		bufMap[i.FileType] = &i
 		bufMap[i.FileType].Files += 1
@@ -255,11 +255,12 @@ func processFile(file string, bufMap map[string]*FileInfo, mu *sync.Mutex) error
 }
 
 func retFileType(file string) string {
-	if fp.Ext(file) == "" {
-		b := fp.Base(file)
-		return b
+	ext := fp.Ext(file)
+	if ext == "" {
+		base := fp.Base(file)
+		return base
 	} else {
-		return fp.Ext(file)
+		return ext
 	}
 }
 
@@ -285,7 +286,7 @@ var singleCommentPrefixes map[string]struct{} = map[string]struct{}{
 	"%":    {},
 	";":    {},
 	"#;":   {},
-	"⍝":    {},
+	"⍝":   {},
 	"rem ": {},
 	"::":   {},
 	":  ":  {},

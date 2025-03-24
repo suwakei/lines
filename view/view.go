@@ -10,6 +10,8 @@ func Write(cntResult counter.CntResult, distPaths []string, ignoreListMap map[st
 	pathsLen := len(distPaths)
 	if pathsLen == 0 {
 		PrintTable(cntResult, ignoreListMap)
+	} else {
+		
 	}
 }
 

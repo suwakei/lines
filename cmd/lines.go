@@ -44,6 +44,7 @@ var (
 			exts, _ := cmd.Flags().GetStringSlice("ext")
 			dists, _ := cmd.Flags().GetStringSlice("dist")
 
+			// initial ignores
 			ignoreListMap := map[string][]string{
 				"file": {
 					".exe",
@@ -105,8 +106,7 @@ var (
 			}
 
 			if cmd.Flags().Changed("dist") {
-				if len(dists) == 0 {
-				} else {
+				if len(dists) != 0 {
 					for i := 0; i < len(dists); i++ {
 						dists[i], err = pathHandler.Parse(dists[i])
 						if err != nil {
@@ -115,6 +115,7 @@ var (
 					}
 				}
 			}
+
 			countResult, err := counter.Count(files, inputPath)
 			if err != nil {
 				log.Fatal(err)

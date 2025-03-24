@@ -37,7 +37,7 @@ and not counting comments that are in strings.
 ```console
 	.asm          Assembly(.asm) Red
 	.bat          Batch File(.bat) Cyan
-    .bash       BASH(.bash)  HiGreen
+    .bash         BASH(.bash)  HiGreen
 	.c            C(.c) Yellow
 	.cc           C++(.cc) Yellow
 	.cs           C#(.h) Cyan
@@ -112,7 +112,7 @@ and not counting comments that are in strings.
 	.xsl          XSLT(.xsl) HiWhite
 	.yml          YAML File(.yml) Magenta
 	.yaml         YAML File(.yaml) Magenta
-	zsh           ZSH Green
+	.zsh           ZSH Green
 	.zig          Zig(.zig) HiYellow
 ```
 
