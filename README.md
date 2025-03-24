@@ -1,4 +1,4 @@
-<img src="./view/img-logo.png" alt="image-logo" width="700px" height="400px">
+<img src="./view/logo.png" alt="image-logo" width="400px" height="150px">
 
 # lines
 
@@ -18,7 +18,7 @@ lines is a CLI application that counts the number of lines, blanks, comments, fi
     - [Supported Options](#supported-options)
 
 ## Example
-<img src="./view/e.png" alt="example-image" width="800px" height="350px">
+<img src="./view/ex.png" alt="example-image" width="1000px" height="350px">
 
 ## Features
 
