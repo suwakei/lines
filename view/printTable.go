@@ -18,7 +18,7 @@ type largests struct {
 }
 
 func RetTotals(cntResult counter.CntResult, ignoreListMap map[string][]string) (
-	map[string]string,
+	[]string,
 	map[string][]string,
 	) {
 	var (
@@ -37,15 +37,15 @@ func RetTotals(cntResult counter.CntResult, ignoreListMap map[string][]string) (
 		AllIgnoreDirs = nil
 	}
 
-	totalMap := make(map[string]string, 8)
+	totalMap := make([]string, 0, 12)
 	ignoreMap := make(map[string][]string, 2)
-	totalMap = map[string]string{
-		"Target Abs Path: ": cntResult.InputPath,
-		"Total Lines: ": fmt.Sprint(cntResult.TotalLines),
-		"Total Blanks: ": fmt.Sprint(cntResult.TotalBlanks),
-		"Total Comments: ": fmt.Sprint(cntResult.TotalComments),
-		"Total Files: ": fmt.Sprint(cntResult.TotalFiles),
-		"Total Bytes: ": fmt.Sprint(cntResult.TotalBytes),
+	totalMap = []string{
+		"Target Abs Path: ", cntResult.InputPath,
+		"Total Lines: ", fmt.Sprint(cntResult.TotalLines),
+		"Total Blanks: ", fmt.Sprint(cntResult.TotalBlanks),
+		"Total Comments: ", fmt.Sprint(cntResult.TotalComments),
+		"Total Files: ", fmt.Sprint(cntResult.TotalFiles),
+		"Total Bytes: ", fmt.Sprint(cntResult.TotalBytes),
 	}
 
 	ignoreMap = map[string][]string {
@@ -59,8 +59,10 @@ func RetTotals(cntResult counter.CntResult, ignoreListMap map[string][]string) (
 func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) {
 	totals, allIgnores := RetTotals(cntResult, ignoreListMap)
 
-	for k, v := range totals {
-		fmt.Println(k, v)
+	for i := 0; i < len(totals); {
+		fmt.Println(totals[i], totals[i+1])
+		i++
+		i++
 	}
 
 	for k, v := range allIgnores {
