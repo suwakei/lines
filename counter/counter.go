@@ -277,17 +277,18 @@ func (r *CntResult) assignTotals() {
 }
 
 // Efficiency of searching comment prefixes from O(n) to O(1)
-var singleCommentPrefixes map[string]struct{} = map[string]struct{}{
-	"//":   {},
-	"///":  {},
-	"#":    {},
-	"!":    {},
-	"--":   {},
-	"%":    {},
-	";":    {},
+var singleCommentPrefixes map[string][]string = map[string][]string{
+	"//":   []string{".c", ".cc", ".cs", ".cpp", ".go", ".h", ".hpp", ".d", ".dart", ".fs", ".go", ".groovy", ".js", ".ts", ".jsx", ".tsx", ".java", ".jsonc", ".kt"},
+	"///":  []string{".d", ".dart"},
+	"/**":  []string{".dart"},
+	"#":    []string{".bash", ".cfg", ".coffee", ".dockerfile", ".Dockerfile", "Dockerfile", ".dockerignore", ".ex", ".gitignore"},
+	"!":    []string{"f90"},
+	"--":   []string{".lua"},
+	"%":    []string{".erl"},
+	";":    []string{".asm", ".clj", ".ini"},
 	"#;":   {},
 	"⍝":   {},
-	"rem ": {},
+	"rem ": {".bat"},
 	"::":   {},
 	":  ":  {},
 	"'":    {},
@@ -310,21 +311,21 @@ func isSingleComment(line string) bool {
 	return false
 }
 
-var blockCommentPrefixes map[string]struct{} = map[string]struct{}{
-	"/*":       {},
-	"/**":      {},
+var blockCommentPrefixes map[string][]string = map[string][]string{
+	"/*":       []string{".c", ".cc", "cs", ".cpp", ".css", ".h", ".hpp", ".d", ".dart", ".go", ".groovy", ".js", ".ts", ".jsx", ".tsx", ".java", ".jsonc", ".kt"},
+	"/**":      []string{".d", ".kt"},
 	"--":       {},
-	"<!--":     {},
+	"<!--":     []string{".html"},
 	"<%--":     {},
 	"////":     {},
 	"/+":       {},
-	"/++":      {},
+	"/++":      []string{".d"},
 	"(*":       {},
 	"{-":       {},
-	"\"\"\"":   {},
+	"\"\"\"":   []string{".ex"},
 	"'''":      {},
 	"#=":       {},
-	"--[[":     {},
+	"--[[":     []string{".lua"},
 	"%{":       {},
 	"#[":       {},
 	"=pod":     {},
@@ -332,6 +333,9 @@ var blockCommentPrefixes map[string]struct{} = map[string]struct{}{
 	"=begin":   {},
 	"<#":       {},
 	"#|":       {},
+	"(comment": {},
+	"###":     []string{".coffee"},
+	"(#":      []string{".fs"},
 }
 
 func isBeginBlockComments(line string) bool {
@@ -351,25 +355,28 @@ func isBeginBlockComments(line string) bool {
 	return false
 }
 
-var blockCommentSuffixes map[string]struct{} = map[string]struct{}{
-	"*/":     {},
+var blockCommentSuffixes map[string][]string = map[string][]string{
+	"*/":     []string{".c", ".cc", "cs", ".cpp", ".css", ".h", ".hpp", ".d", ".dart", ".go", ".groovy", ".js", ".ts", ".jsx", ".tsx", ".java", ".jsonc", ".kt"},
+	"+/":     []string{".d"},
 	"**/":    {},
-	"-->":    {},
+	"-->":    []string{".html"},
 	"--%>":   {},
 	"--":     {},
-	"+/":     {},
 	"*)":     {},
 	"-}":     {},
 	"%}":     {},
 	"=#":     {},
 	"=cut":   {},
 	"=end":   {},
-	"--]]":   {},
+	"]]":   []string{".lua"},
 	"]#":     {},
 	"#>":     {},
-	"\"\"\"": {},
+	"\"\"\"": []string{".ex"},
 	"'''":    {},
 	"|#":     {},
+	")":      {},
+	"###":    {},
+	"#)":    []string{".fs"},
 }
 
 func isEndBlockComments(line string) bool {
