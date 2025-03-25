@@ -1,4 +1,4 @@
-<img src="./view/logo.png" alt="image-logo" width="400px" height="150px">
+<img src="https://github.com/suwakei/logo/main/logo.png" alt="image-logo" width="400px" height="150px">
 
 # lines
 
@@ -19,7 +19,7 @@ lines is a CLI application that counts the number of lines, blanks, comments, fi
     - [Supported Options](#supported-options)
 
 ## Example
-<img src="./view/ex.png" alt="example-image" width="1000px" height="350px">
+<img src="https://github.com/suwakei/logo/main/ex.png" alt="example-image" width="1000px" height="350px">
 
 ## Features
 
