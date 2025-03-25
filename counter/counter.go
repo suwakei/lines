@@ -335,7 +335,7 @@ var singleCommentPrefixes map[string][]string = map[string][]string{
 }
 
 func isSingleComment(line string) bool {
-	lineLen := len(line)
+	lineLen := len(strings.TrimSpace(line))
 	if lineLen == 0 {
 		return false
 	}
@@ -402,8 +402,7 @@ var blockCommentPrefixes map[string][]string = map[string][]string{
 }
 
 func isBeginBlockComments(line string) bool {
-	lineLen := len(line)
-
+	lineLen := len(strings.TrimSpace(line))
 	if lineLen == 0 {
 		return false
 	}
