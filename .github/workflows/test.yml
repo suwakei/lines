@@ -1,4 +1,4 @@
-name: build
+name: test
 
 on:
   push:
@@ -11,29 +11,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
-    strategy:
-      matrix:
-        go-versions: [1.23.0]
-        os: [ubuntu-latest]
-    runs-on: ${{matrix.os}}
-    timeout-minutes: 5
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{matrix.go-versions}}
-
-      - name: Go Build
-        run: go build -ldflags="-s -w"
-
   test:
-    needs: build
-
     strategy:
       matrix:
         go-versions: [1.23.0]
@@ -54,7 +32,7 @@ jobs:
         run: go test -v .
 
   benchmark:
-    needs: build
+    needs: test
 
     strategy:
       matrix:

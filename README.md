@@ -2,7 +2,8 @@
 
 # lines
 
-[![Build Status](https://github.com/suwakei/lines/actions/workflows/ci.yml/badge.svg)](https://github.com/suwakei/lines/actions/workflows/ci.yml)
+[![Build Status](https://github.com/suwakei/lines/actions/workflows/build.yml/badge.svg)](https://github.com/suwakei/lines/actions/workflows/build.yml)
+[![Test Status](https://github.com/suwakei/lines/actions/workflows/test.yml/badge.svg)](https://github.com/suwakei/lines/actions/workflows/test.yml)
 [![Lint Status](https://github.com/suwakei/lines/actions/workflows/lint.yml/badge.svg)](https://github.com/suwakei/lines/actions/workflows/lint.yml)
 
 ## Overview
