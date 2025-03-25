@@ -38,7 +38,7 @@ and not counting comments that are in strings.
 ```console
 	.asm          Assembly(.asm) Red
 	.bat          Batch File(.bat) Cyan
-    .bash         BASH(.bash)  HiGreen
+	.bash         BASH(.bash) HiGreen
 	.c            C(.c) Yellow
 	.cc           C++(.cc) Yellow
 	.cs           C#(.h) Cyan
