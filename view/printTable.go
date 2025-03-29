@@ -61,8 +61,7 @@ func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) 
 
 	for i := 0; i < len(totals); {
 		fmt.Println(totals[i], totals[i+1])
-		i++
-		i++
+		i += 2
 	}
 
 	for k, v := range allIgnores {
