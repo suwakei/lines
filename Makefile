@@ -17,7 +17,7 @@ build:
 
 test:
 	@echo "[INFO] *****************test***********************"
-	@go test -v .
+	@go test -v ./...
 
 ben:
 	@echo "[INFO] *****************benchmark**********************"
