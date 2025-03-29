@@ -15,7 +15,7 @@ const VERSION string = "1.0.0"
 
 var (
 	rootCmd = &cobra.Command{
-		Use:   "lines [PATH] [OPTIONS]",
+		Use:   "lines [OPTIONS] PATH",
 		Short: "lines counts the number of lines of dir or file that you input.",
 		Long: `lines counts the number of lines of dir or file that you input.
 		also this app can output result in [.json, .jsonc, .yml, .yaml, .toml, .txt] format
