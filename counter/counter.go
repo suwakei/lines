@@ -22,8 +22,8 @@ type FileInfo struct {
 }
 
 type CntResult struct {
-	Info        []FileInfo
-	InputPath   string
+	Info          []FileInfo
+	InputPath     string
 	TotalLines    int
 	TotalBlanks   int
 	TotalComments int
@@ -114,7 +114,7 @@ var FileTypeList map[string][]string = map[string][]string{
 	".xsl":          {"XSLT(.xsl)", "HiWhite"},
 	".yml":          {"YAML File(.yml)", "Magenta"},
 	".yaml":         {"YAML File(.yaml)", "Magenta"},
-	".zsh":           {"ZSH", "Green"},
+	".zsh":          {"ZSH", "Green"},
 	".zig":          {"Zig(.zig)", "HiYellow"},
 }
 
@@ -186,6 +186,10 @@ func count(file string) (FileInfo, error) {
 
 	var inBlockComment bool = false
 	for scanner.Scan() {
+		if err := scanner.Err(); err != nil {
+			log.Fatalf("scan failed %q", err)
+		}
+
 		info.Lines++
 		line := strings.TrimSpace(scanner.Text())
 		info.bytesBuf += len(line) + 1 // +1 for the newline character
@@ -195,7 +199,7 @@ func count(file string) (FileInfo, error) {
 			continue
 		}
 
-		if isBeginBlockComments(line) {
+		if info.isBeginBlockComments(line) {
 			inBlockComment = true
 			info.Comments++
 			continue
@@ -203,19 +207,16 @@ func count(file string) (FileInfo, error) {
 
 		if inBlockComment {
 			info.Comments++
-			if isEndBlockComments(line) {
+			if info.isEndBlockComments(line) {
 				inBlockComment = false
 			}
+			continue
 		}
 
-		if isSingleComment(line) {
+		if info.isSingleComment(line) {
 			info.Comments++
 			continue
 		}
-	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatalf("scan failed %q", err)
 	}
 	return info, nil
 }
@@ -278,7 +279,7 @@ func (r *CntResult) assignTotals() {
 
 // Efficiency of searching comment prefixes from O(n) to O(1)
 var singleCommentPrefixes map[string][]string = map[string][]string{
-	"//":   []string{
+	"//": []string{
 		".c",
 		".cc",
 		".cs",
@@ -301,9 +302,9 @@ var singleCommentPrefixes map[string][]string = map[string][]string{
 		".m",
 		".php",
 	},
-	"///":  []string{".d",".dart", ".rs"},
-	"/**":  []string{".dart"},
-	"#":    []string{
+	"///": []string{".d", ".dart", ".rs"},
+	"/**": []string{".dart"},
+	"#": []string{
 		".bash",
 		".cfg",
 		".coffee",
@@ -327,24 +328,27 @@ var singleCommentPrefixes map[string][]string = map[string][]string{
 	"%":    []string{".erl"},
 	";":    []string{".asm", ".clj", ".ini"},
 	"#;":   {},
-	"⍝":   {},
+	"⍝":    {},
 	"rem ": {".bat"},
 	"::":   {},
 	":  ":  {},
 	"'":    {},
 }
 
-func isSingleComment(line string) bool {
+func (fi FileInfo) isSingleComment(line string) bool {
 	lineLen := len(strings.TrimSpace(line))
 	if lineLen == 0 {
 		return false
 	}
 
-	// conpare prefix to line
-	for prefix := range singleCommentPrefixes {
-		prefLen := len(prefix)
-		if lineLen >= prefLen && line[:prefLen] == prefix {
-			return true
+	for prefix, extensions := range singleCommentPrefixes {
+		for _, ext := range extensions {
+			if ext == fi.FileType {
+				prefLen := len(prefix)
+				if lineLen >= prefLen && line[:prefLen] == prefix {
+					return true
+				}
+			}
 		}
 	}
 
@@ -352,7 +356,7 @@ func isSingleComment(line string) bool {
 }
 
 var blockCommentPrefixes map[string][]string = map[string][]string{
-	"/*":       []string{
+	"/*": []string{
 		".c",
 		".cc",
 		"cs",
@@ -397,20 +401,25 @@ var blockCommentPrefixes map[string][]string = map[string][]string{
 	"<#":       {},
 	"#|":       {},
 	"(comment": {},
-	"###":     []string{".coffee"},
-	"(#":      []string{".fs"},
+	"###":      []string{".coffee"},
+	"(#":       []string{".fs"},
 }
 
-func isBeginBlockComments(line string) bool {
+func (fi FileInfo) isBeginBlockComments(line string) bool {
 	lineLen := len(strings.TrimSpace(line))
 	if lineLen == 0 {
 		return false
 	}
 
-	for prefix := range blockCommentPrefixes {
-		prefLen := len(prefix)
-		if lineLen >= prefLen && line[:prefLen] == prefix {
-			return true
+	// fi.FileTypeに対応するプレフィックスを取得
+	for blockPrefix, extensions := range blockCommentPrefixes {
+		for _, ext := range extensions {
+			if ext == fi.FileType {
+				prefLen := len(blockPrefix)
+				if lineLen >= prefLen && line[:prefLen] == blockPrefix {
+					return true
+				}
+			}
 		}
 	}
 
@@ -418,7 +427,8 @@ func isBeginBlockComments(line string) bool {
 }
 
 var blockCommentSuffixes map[string][]string = map[string][]string{
-	"*/":     []string{".c",
+	"*/": []string{
+		".c",
 		".cc",
 		"cs",
 		".cpp",
@@ -460,24 +470,30 @@ var blockCommentSuffixes map[string][]string = map[string][]string{
 	"|#":     {},
 	")":      {},
 	"###":    {},
-	"#)":    []string{".fs"},
+	"#)":     []string{".fs"},
 }
 
-func isEndBlockComments(line string) bool {
+func (fi FileInfo) isEndBlockComments(line string) bool {
 	if len(line) == 0 {
 		return false
 	}
 
-	// confirm suffix directly
-	if len(line) >= 2 {
-		if _, exists := blockCommentSuffixes[line[len(line)-2:]]; exists {
-			return true
+	// fi.FileTypeに対応するサフィックスを確認
+	if suffixes, exists := blockCommentSuffixes[line[len(line)-2:]]; exists {
+		for _, ext := range suffixes {
+			if ext == fi.FileType {
+				return true
+			}
 		}
 	}
 
 	if len(line) >= 3 {
-		if _, exists := blockCommentSuffixes[line[len(line)-3:]]; exists {
-			return true
+		if suffixes, exists := blockCommentSuffixes[line[len(line)-3:]]; exists {
+			for _, ext := range suffixes {
+				if ext == fi.FileType {
+					return true
+				}
+			}
 		}
 	}
 
