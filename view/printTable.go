@@ -1,6 +1,7 @@
 package view
 
 import (
+	"os"
 	"fmt"
 	"strings"
 
@@ -57,30 +58,31 @@ func RetTotals(cntResult counter.CntResult, ignoreListMap map[string][]string) (
 }
 
 func PrintTable(cntResult counter.CntResult, ignoreListMap map[string][]string) {
+	out := os.Stdout
 	totals, allIgnores := RetTotals(cntResult, ignoreListMap)
 
 	for i := 0; i < len(totals); {
-		fmt.Println(totals[i], totals[i+1])
+		fmt.Fprintln(out, totals[i], totals[i+1])
 		i += 2
 	}
 
 	for k, v := range allIgnores {
 		if v == nil {
-			fmt.Println(k, "none")
+			fmt.Fprintln(out, k, "none")
 		} else {
-			fmt.Println(k, v)
+			fmt.Fprintln(out, k, v)
 		}
 	}
 
-	fmt.Print("\n\n")
+	fmt.Fprint(out, "\n\n")
 
 	largests := largestsNew(cntResult)
 
 	header, body, footer := makeTable(cntResult, *largests)
 
-	fmt.Println(header)
-	fmt.Println(body)
-	fmt.Println(footer)
+	fmt.Fprintln(out, header)
+	fmt.Fprintln(out, body)
+	fmt.Fprintln(out, footer)
 }
 
 func space(currentTarget string, largestLen int) string {
