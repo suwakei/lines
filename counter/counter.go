@@ -2,6 +2,7 @@ package counter
 
 import (
 	"bufio"
+	"math"
 	"fmt"
 	"log"
 	"os"
@@ -162,7 +163,7 @@ func Count(files []string, inputPath string) (CntResult, error) {
 	}
 
 	for _, m := range bufMap {
-		m.Bytes = fmt.Sprintf("%d(%dKB)", m.bytesBuf, b2kb(m.bytesBuf))
+		m.Bytes = fmt.Sprintf("%d(%s)", m.bytesBuf, readableBytes(uint64(m.bytesBuf)))
 		result.Info = append(result.Info, *m)
 	}
 	result.assignTotals()
@@ -274,7 +275,7 @@ func (r *CntResult) assignTotals() {
 		r.TotalFiles += i.Files
 		TotalBytesBuf += i.bytesBuf
 	}
-	r.TotalBytes = fmt.Sprintf("%d(%dKB)", TotalBytesBuf, b2kb(TotalBytesBuf))
+	r.TotalBytes = fmt.Sprintf("%d(%s)", TotalBytesBuf, readableBytes(uint64(TotalBytesBuf)))
 }
 
 // Efficiency of searching comment prefixes from O(n) to O(1)
@@ -500,6 +501,24 @@ func (fi FileInfo) isEndBlockComments(line string) bool {
 	return false
 }
 
-func b2kb(Bytes int) int {
-	return Bytes / 1024
-}
+func readableBytes(s uint64) string {
+	sizes := []string{"B", "KB", "MB", "GB", "TB", "PB", "EB"}
+	var base float64 = 1000
+
+	if s < 10 {
+		return fmt.Sprintf("%d B", s)
+	}
+
+	logn := func(n, b float64) float64 {
+		return math.Log(n) / math.Log(b)
+	}
+
+	e := math.Floor(logn(float64(s), base))
+	suffix := sizes[int(e)]
+	val := math.Floor(float64(s)/math.Pow(base, e)*10+0.5) / 10
+	f := "%.0f %s"
+	if val < 10 {
+		f = "%.1f %s"
+	}
+	return fmt.Sprintf(f, val, suffix)
+} 
