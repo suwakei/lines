@@ -7,7 +7,10 @@ default:
 all:
 	fmt test build
 
-# add -race option
+run:
+	@echo "[INFO] *****************run***********************"
+	@go run main.go .
+
 build:
 	@echo "[INFO] *****************build***********************"
 	@go build -ldflags="-s -w" -trimpath -o ./bin/lines.exe
