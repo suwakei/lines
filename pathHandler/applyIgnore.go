@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	fp "path/filepath"
 	"strings"
 )
 
@@ -19,10 +18,10 @@ func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]strin
 			return ignoreListMap, nil
 		}
 
-		if v != ".gitignore" {
-			abs, _ := Parse(v)
-			return nil, fmt.Errorf("[INFO]: ignore file must be .gitignore\n not exist %s", abs)
-		}
+		// if v != ".gitignore" {
+		// 	abs, _ := Parse(v)
+		// 	return nil, fmt.Errorf("[INFO]: ignore file must be .gitignore\n not exist %s", abs)
+		// }
 
 		p, err := Parse(v)
 		if err != nil {
@@ -45,10 +44,10 @@ func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]strin
 			if strings.HasPrefix(line, "#") || line == "" {
 				continue
 			}
-			if IsFile(line) {
-				ignoreListMap["file"] = append(ignoreListMap["file"], line)
-			} else {
+			if IsDir(line) {
 				ignoreListMap["dir"] = append(ignoreListMap["dir"], line)
+			} else {
+				ignoreListMap["file"] = append(ignoreListMap["file"], line)
 			}
 		}
 		if err := scanner.Err(); err != nil {
@@ -65,10 +64,10 @@ func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]strin
 			if err != nil {
 				return nil, err
 			}
-			if IsFile(i) {
-				ignoreListMap["file"] = append(ignoreListMap["file"], ignore)
-			} else {
+			if IsDir(i) {
 				ignoreListMap["dir"] = append(ignoreListMap["dir"], ignore)
+			} else {
+				ignoreListMap["file"] = append(ignoreListMap["file"], ignore)
 			}
 		}
 		return ignoreListMap, nil
@@ -78,15 +77,10 @@ func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]strin
 	}
 }
 
-func IsFile(path string) bool {
-	base := fp.Base(path)
-	if string(base[0]) == "." || string(base[0]) == "*" {
-		return true
-	}
-
+func IsDir(path string) bool {
 	info, err := os.Stat(path)
 	if err != nil {
 		return false
 	}
-	return !info.IsDir()
+	return info.IsDir()
 }
