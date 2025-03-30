@@ -328,12 +328,7 @@ var singleCommentPrefixes map[string][]string = map[string][]string{
 	"--":   []string{".lua"},
 	"%":    []string{".erl"},
 	";":    []string{".asm", ".clj", ".ini"},
-	"#;":   {},
-	"⍝":    {},
 	"rem ": {".bat"},
-	"::":   {},
-	":  ":  {},
-	"'":    {},
 }
 
 func (fi FileInfo) isSingleComment(line string) bool {
@@ -360,7 +355,7 @@ var blockCommentPrefixes map[string][]string = map[string][]string{
 	"/*": []string{
 		".c",
 		".cc",
-		"cs",
+		".cs",
 		".cpp",
 		".css",
 		".h",
@@ -381,27 +376,13 @@ var blockCommentPrefixes map[string][]string = map[string][]string{
 		".rs",
 	},
 	"/**":      []string{".d", ".kt", ".m"},
-	"--":       {},
 	"{":        []string{".pas"},
 	"<!--":     []string{".html", ".xml", ".md"},
-	"<%--":     {},
-	"////":     {},
-	"/+":       {},
 	"/++":      []string{".d"},
-	"(*":       {},
-	"{-":       {},
 	"\"\"\"":   []string{".ex", ".py"},
-	"'''":      {},
-	"#=":       {},
 	"--[[":     []string{".lua"},
-	"%{":       {},
-	"#[":       {},
 	"=pod":     []string{".pl"},
-	"=comment": {},
 	"=begin":   []string{".rb"},
-	"<#":       {},
-	"#|":       {},
-	"(comment": {},
 	"###":      []string{".coffee"},
 	"(#":       []string{".fs"},
 }
@@ -412,12 +393,11 @@ func (fi FileInfo) isBeginBlockComments(line string) bool {
 		return false
 	}
 
-	// fi.FileTypeに対応するプレフィックスを取得
 	for blockPrefix, extensions := range blockCommentPrefixes {
 		for _, ext := range extensions {
 			if ext == fi.FileType {
 				prefLen := len(blockPrefix)
-				if lineLen >= prefLen && line[:prefLen] == blockPrefix {
+				if lineLen >= prefLen && string(line[:prefLen]) == blockPrefix {
 					return true
 				}
 			}
@@ -431,7 +411,7 @@ var blockCommentSuffixes map[string][]string = map[string][]string{
 	"*/": []string{
 		".c",
 		".cc",
-		"cs",
+		".cs",
 		".cpp",
 		".css",
 		".h",
@@ -452,46 +432,26 @@ var blockCommentSuffixes map[string][]string = map[string][]string{
 		".rs",
 	},
 	"+/":     []string{".d"},
-	"**/":    {},
 	"}":      []string{".pas"},
-	"-->":    []string{".html", "xml", ".md"},
-	"--%>":   {},
-	"--":     {},
-	"*)":     {},
-	"-}":     {},
-	"%}":     {},
-	"=#":     {},
+	"-->":    []string{".html", ".xml", ".md"},
 	"=cut":   []string{".pl"},
 	"=end":   []string{".rb"},
 	"]]":     []string{".lua"},
-	"]#":     {},
-	"#>":     {},
-	"\"\"\"": []string{".ex"},
-	"'''":    {},
-	"|#":     {},
-	")":      {},
-	"###":    {},
+	"\"\"\"": []string{".ex", ".py"},
 	"#)":     []string{".fs"},
 }
 
 func (fi FileInfo) isEndBlockComments(line string) bool {
-	if len(line) == 0 {
+	lineLen := len(strings.TrimSpace(line))
+	if lineLen == 0 {
 		return false
 	}
 
-	// fi.FileTypeに対応するサフィックスを確認
-	if suffixes, exists := blockCommentSuffixes[line[len(line)-2:]]; exists {
-		for _, ext := range suffixes {
+	for blockSuffix, extensions := range blockCommentSuffixes {
+		for _, ext := range extensions {
 			if ext == fi.FileType {
-				return true
-			}
-		}
-	}
-
-	if len(line) >= 3 {
-		if suffixes, exists := blockCommentSuffixes[line[len(line)-3:]]; exists {
-			for _, ext := range suffixes {
-				if ext == fi.FileType {
+				suffLen := len(blockSuffix)
+				if lineLen >= suffLen && string(line[:suffLen]) == blockSuffix {
 					return true
 				}
 			}
