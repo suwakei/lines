@@ -35,6 +35,8 @@ and not counting comments that are in strings.
 > [!IMPORTANT]
 > Files not included in the following extensions will not be colored,
 > but will be displayed in the count results.
+
+[Ext] [Detail] [Color]
 ```console
 	.asm          Assembly(.asm) Red
 	.bat          Batch File(.bat) Cyan
