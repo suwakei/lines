@@ -6,33 +6,31 @@ import (
 )
 
 var files = []string{
-	"../testdata/dummy/dummy.txt",
-	"../testdata/dummy/dummy2.txt",
-	"../testdata/dummy/dummy3.txt",
-	"../testdata/dummy/dummy4.log",
-	"../testdata/dummy/Makefile",
-	"../testdata/dummy/view.go",
-	"../testdata/dummy/view.txt",
-	"../testdata/dummy/a.exe",
+	"../testdata/linestest/Dockerfile",
+	"../testdata/linestest/Makefile",
+	"../testdata/linestest/test.go",
+	"../testdata/linestest/view.txt",
+	"../testdata/linestest/テスト.txt",
 }
 
-func BenchmarkCount(b *testing.B) {
-	inputPath := "../testdata/dummy"
+// func BenchmarkCount(b *testing.B) {
+// 	inputPath := "./testdata/bench"
 
-	for i := 0; i < b.N; i++ {
-		_, err := Count(files, inputPath)
-		if err != nil {
-			b.Fatalf("Expected no error, got %v", err)
-		}
-	}
-}
+// 	for i := 0; i < b.N; i++ {
+// 		_, err := Count(files, inputPath)
+// 		if err != nil {
+// 			b.Fatalf("Expected no error, got %v", err)
+// 		}
+// 	}
+// }
 
 func TestCount(t *testing.T) {
-	inputPath := "../testdata/dummy"
-	expectedLines := 39
-	expectedBlanks := 4
-	expectedComments := 1
-	expectedBytes := "1600(1KB)"
+	inputPath := "../testdata/linestest"
+	expectedLines := 90
+	expectedBlanks := 12
+	expectedComments := 6
+	expectedFiles := 5
+	expectedBytes := "3460(3.5 KB)"
 
 	result, err := Count(files, inputPath)
 	if err != nil {
@@ -47,6 +45,9 @@ func TestCount(t *testing.T) {
 	}
 	if result.TotalComments != expectedComments {
 		t.Errorf("expected %d comments, got %d", expectedComments, result.TotalComments)
+	}
+	if result.TotalFiles != expectedFiles {
+		t.Errorf("expected %d files, got %d", expectedFiles, result.TotalFiles)
 	}
 	if result.TotalBytes != expectedBytes {
 		t.Errorf("expected %s bytes, got %s", expectedBytes, result.TotalBytes)
