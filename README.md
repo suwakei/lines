@@ -120,7 +120,7 @@ and not counting comments that are in strings.
 ### Supported Options
 ```bash
 Usage:
-  lines [PATH] [OPTIONS] [flags]
+  lines <PATH> [OPTIONS]
 
 Flags:
   -d, --dist strings    input filepath to output. output format [.json, .jsonc, .yml, .yaml, .toml, .txt]
