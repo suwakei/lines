@@ -11,7 +11,7 @@ func Write(cntResult counter.CntResult, distPaths []string, ignoreListMap map[st
 	if pathsLen == 0 {
 		PrintTable(cntResult, ignoreListMap)
 	} else {
-		
+
 	}
 }
 

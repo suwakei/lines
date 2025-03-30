@@ -1,8 +1,8 @@
 package view
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/fatih/color"
@@ -21,10 +21,10 @@ type largests struct {
 func RetTotals(cntResult counter.CntResult, ignoreListMap map[string][]string) (
 	[]string,
 	map[string][]string,
-	) {
+) {
 	var (
 		AllIgnoreFiles []string
-		AllIgnoreDirs []string
+		AllIgnoreDirs  []string
 	)
 	if len(ignoreListMap["file"]) != 0 {
 		AllIgnoreFiles = ignoreListMap["file"]
@@ -49,9 +49,9 @@ func RetTotals(cntResult counter.CntResult, ignoreListMap map[string][]string) (
 		"Total Bytes: ", fmt.Sprint(cntResult.TotalBytes),
 	}
 
-	ignoreMap = map[string][]string {
+	ignoreMap = map[string][]string{
 		"All ignore files: ": AllIgnoreFiles,
-		"All ignore dirs: ": AllIgnoreDirs,
+		"All ignore dirs: ":  AllIgnoreDirs,
 	}
 
 	return totalMap, ignoreMap
