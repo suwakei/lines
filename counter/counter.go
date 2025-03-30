@@ -438,6 +438,7 @@ var blockCommentSuffixes map[string][]string = map[string][]string{
 	"=end":   []string{".rb"},
 	"]]":     []string{".lua"},
 	"\"\"\"": []string{".ex", ".py"},
+	"###": []string{".coffee"},
 	"#)":     []string{".fs"},
 }
 
