@@ -2,9 +2,9 @@ package counter
 
 import (
 	"bufio"
-	"math"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	fp "path/filepath"
 	"strings"
@@ -280,7 +280,7 @@ func (r *CntResult) assignTotals() {
 
 // Efficiency of searching comment prefixes from O(n) to O(1)
 var singleCommentPrefixes map[string][]string = map[string][]string{
-	"//": []string{
+	"//": {
 		".c",
 		".cc",
 		".cs",
@@ -302,10 +302,12 @@ var singleCommentPrefixes map[string][]string = map[string][]string{
 		".kt",
 		".m",
 		".php",
+		".rs",
 	},
-	"///": []string{".d", ".dart", ".rs"},
-	"/**": []string{".dart"},
-	"#": []string{
+	"///": {".d", ".dart", ".rs"},
+	"//!": {".rs"},
+	"/**": {".dart"},
+	"#": {
 		".bash",
 		".cfg",
 		".coffee",
@@ -321,14 +323,13 @@ var singleCommentPrefixes map[string][]string = map[string][]string{
 		".pl",
 		".php",
 		".rb",
-		".rs",
 	},
-	"##":   []string{".nim"},
-	"!":    []string{"f90"},
-	"--":   []string{".lua"},
-	"%":    []string{".erl"},
-	";":    []string{".asm", ".clj", ".ini"},
-	"rem ": {".bat"},
+	"##":  {".nim"},
+	"!":   {".f90"},
+	"--":  {".lua"},
+	"%":   {".erl"},
+	";":   {".asm", ".clj", ".ini"},
+	"rem": {".bat"},
 }
 
 func (fi FileInfo) isSingleComment(line string) bool {
@@ -341,7 +342,7 @@ func (fi FileInfo) isSingleComment(line string) bool {
 		for _, ext := range extensions {
 			if ext == fi.FileType {
 				prefLen := len(prefix)
-				if lineLen >= prefLen && line[:prefLen] == prefix {
+				if lineLen >= prefLen && string(line[:prefLen]) == prefix {
 					return true
 				}
 			}
@@ -352,7 +353,7 @@ func (fi FileInfo) isSingleComment(line string) bool {
 }
 
 var blockCommentPrefixes map[string][]string = map[string][]string{
-	"/*": []string{
+	"/*": {
 		".c",
 		".cc",
 		".cs",
@@ -375,16 +376,17 @@ var blockCommentPrefixes map[string][]string = map[string][]string{
 		".php",
 		".rs",
 	},
-	"/**":      []string{".d", ".kt", ".m"},
-	"{":        []string{".pas"},
-	"<!--":     []string{".html", ".xml", ".md"},
-	"/++":      []string{".d"},
-	"\"\"\"":   []string{".ex", ".py"},
-	"--[[":     []string{".lua"},
-	"=pod":     []string{".pl"},
-	"=begin":   []string{".rb"},
-	"###":      []string{".coffee"},
-	"(#":       []string{".fs"},
+	"/*!":    {".rs"},
+	"/**":    {".d", ".kt", ".m", ".rs"},
+	"{":      {".pas"},
+	"<!--":   {".html", ".xml", ".md"},
+	"/++":    {".d"},
+	"\"\"\"": {".ex", ".py"},
+	"--[[":   {".lua"},
+	"=pod":   {".pl"},
+	"=begin": {".rb"},
+	"###":    {".coffee"},
+	"(#":     {".fs"},
 }
 
 func (fi FileInfo) isBeginBlockComments(line string) bool {
@@ -408,7 +410,7 @@ func (fi FileInfo) isBeginBlockComments(line string) bool {
 }
 
 var blockCommentSuffixes map[string][]string = map[string][]string{
-	"*/": []string{
+	"*/": {
 		".c",
 		".cc",
 		".cs",
@@ -431,15 +433,15 @@ var blockCommentSuffixes map[string][]string = map[string][]string{
 		".php",
 		".rs",
 	},
-	"+/":     []string{".d"},
-	"}":      []string{".pas"},
-	"-->":    []string{".html", ".xml", ".md"},
-	"=cut":   []string{".pl"},
-	"=end":   []string{".rb"},
-	"]]":     []string{".lua"},
-	"\"\"\"": []string{".ex", ".py"},
-	"###": []string{".coffee"},
-	"#)":     []string{".fs"},
+	"+/":     {".d"},
+	"}":      {".pas"},
+	"-->":    {".html", ".xml", ".md"},
+	"=cut":   {".pl"},
+	"=end":   {".rb"},
+	"]]":     {".lua"},
+	"\"\"\"": {".ex", ".py"},
+	"###":    {".coffee"},
+	"#)":     {".fs"},
 }
 
 func (fi FileInfo) isEndBlockComments(line string) bool {
@@ -482,4 +484,4 @@ func readableBytes(s uint64) string {
 		f = "%.1f %s"
 	}
 	return fmt.Sprintf(f, val, suffix)
-} 
+}
