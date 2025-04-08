@@ -1,29 +1,34 @@
 package pathHandler
 
 import (
+	"fmt"
+	"path/filepath"
+	"slices"
 	"testing"
 )
 
 func TestSearch(t *testing.T) {
-	// テスト用のパスと無視リストを設定
-	testPath := "test_directory"
+	// configure path for testing
+	testPathAbs, _ := filepath.Abs("../testdata/linestest")
+	testPath := filepath.Clean(testPathAbs)
 	ignores := map[string][]string{
-		"dir":  {"ignored_dir"},
-		"file": {"ignored_file.txt"},
+		"dir":  {filepath.Join(testPath, "ignore_dir")},
+		"file": {filepath.Join(testPath, "ignore.txt")},
 	}
 
-	// Search関数を呼び出し、結果を検証
+	// call Search function and verify result
 	files, err := Search(testPath, ignores)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
 
-	// 期待されるファイルリストを検証
-	expectedFiles := []string{"file1.txt", "file2.txt"} // 期待されるファイル名を設定
-	if len(files) != len(expectedFiles) {
-		t.Fatalf("expected %v files, got %v", len(expectedFiles), len(files))
+	// verify expected fileList
+	expectedFiles := mapString([]string{"Dockerfile", "Makefile", "test.go", "view.txt", "テスト.txt"})
+	for _, f := range files {
+		if !slices.Contains(expectedFiles, f) {
+			t.Errorf("%s is not expected file", f)
+		}
 	}
-	// 追加の検証を行うことができます
 }
 
 func TestContains(t *testing.T) {
@@ -53,4 +58,14 @@ func TestIsInvalidFile(t *testing.T) {
 	if isInvalidFile("LICENSE") {
 		t.Errorf("expected false for LICENSE")
 	}
+}
+
+func mapString(s []string) []string {
+	resS := make([]string, 0, len(s))
+
+	for _, S := range s {
+		abs, _ := filepath.Abs(fmt.Sprintf("../testdata/linestest/%s", S))
+		resS = append(resS, filepath.Clean(abs))
+	}
+	return resS
 }
