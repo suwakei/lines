@@ -2,9 +2,10 @@ package pathHandler
 
 import (
 	"io/fs"
-	"path/filepath"
+	//"path/filepath"
 	fp "path/filepath"
-	"slices"
+	//"slices"
+	"regexp"
 )
 
 func Search(path string, ignores map[string][]string) ([]string, error) {
@@ -47,14 +48,21 @@ func Search(path string, ignores map[string][]string) ([]string, error) {
 }
 
 func contains(path string, ignores []string) bool {
-	if slices.Contains(ignores, path) {
-		return true
+	// if slices.Contains(ignores, path) {
+	// 	return true
+	// }
+	// pathExt := fp.Ext(path)
+	// if pathExt == "" {
+	// 	return slices.Contains(ignores, filepath.Base(path))
+	// }
+	// return slices.Contains(ignores, pathExt)
+	for _, pattern := range ignores {
+		matched, err := regexp.MatchString(pattern, path)
+		if err == nil && matched {
+			return true
+		}
 	}
-	pathExt := fp.Ext(path)
-	if pathExt == "" {
-		return slices.Contains(ignores, filepath.Base(path))
-	}
-	return slices.Contains(ignores, pathExt)
+	return false
 }
 
 func isInvalidFile(path string) bool {
