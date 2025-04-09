@@ -88,6 +88,7 @@ var (
 				ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 			}
 
+
 			if cmd.Flags().Changed("ext") {
 				temp, err := pathHandler.MakeIgnoreList(exts)
 				if err != nil {
