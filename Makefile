@@ -13,6 +13,11 @@ winamdb:
 	@echo "[INFO] *****************OS=windows ARCH=amd64***********************"
 	@GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o ./bin/lines.exe
 
+winamdbc:
+	@echo "[INFO] *****************Windows_build_currentdir***********************"
+	@echo "[INFO] *****************OS=windows ARCH=amd64***********************"
+	@GOOS=windows GOARCH=amd64 go build -ldflags="-s -w" -trimpath -o ./lines.exe
+
 winarmb:
 	@echo "[INFO] *****************Windows_build***********************"
 	@echo "[INFO] *****************OS=windows ARCH=arm64***********************"
