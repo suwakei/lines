@@ -19,7 +19,7 @@ lines is a CLI application that counts the number of lines, blanks, comments, fi
     - [Supported Options](#supported-options)
 
 ## Example
-<img src="https://raw.githubusercontent.com/suwakei/logo/main/lines/lines_example.png" alt="example-image" width="1000px" height="350px">
+<img src="https://raw.githubusercontent.com/suwakei/logo/main/lines/lines_example.gif" alt="example-image" width="1000px" height="350px">
 
 ## Features
 
