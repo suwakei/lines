@@ -14,8 +14,8 @@ jobs:
   build:
     strategy:
       matrix:
-        go-versions: [1.23.0]
-        os: [ubuntu-latest]
+        go-versions: [1.23.x, 1.22.x, 1.21.x]
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{matrix.os}}
     timeout-minutes: 5
 
