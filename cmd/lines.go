@@ -67,7 +67,6 @@ var (
 					".png",
 					".jpg",
 					".jpeg",
-					".svg",
 					".gif",
 					".bmp",
 					".tiff",
@@ -75,6 +74,9 @@ var (
 				},
 			}
 
+
+			// This section is the process for reading and analying ".gitignore" file.
+			// placed on input path, add the content to ignoreListMap.
 			if cmd.Flags().Changed("ignore") {
 				if ignoreFile == "" {
 					ignoreFile = ".gitignore"
@@ -89,6 +91,8 @@ var (
 			}
 
 
+			// This section is the process for adding file ext that.
+			// input with stdin (e.g. shell) to ignoreListMap.
 			if cmd.Flags().Changed("ext") {
 				temp, err := pathHandler.MakeIgnoreList(exts)
 				if err != nil {
@@ -99,13 +103,18 @@ var (
 				ignoreListMap["dir"] = append(ignoreListMap["dir"], temp["dir"]...)
 			}
 
-			files, err := pathHandler.Search(inputPath, ignoreListMap)
 
+			// This section is the process of searching for file paths that should be counted.
+			// The contents of the ignorefileMap are also taken into account.
+			files, err := pathHandler.Search(inputPath, ignoreListMap)
 			if err != nil {
 				fmt.Println("[ERROR]: failed to get current directory!\n", err)
 				return
 			}
 
+
+			// This section is the process of storing the path to the file that.
+			// outputs the results of the stdin input into "dists".
 			if cmd.Flags().Changed("dist") {
 				if len(dists) != 0 {
 					for i := 0; i < len(dists); i++ {
@@ -117,10 +126,15 @@ var (
 				}
 			}
 
+
+
+			// This section is the process for counting the file lines and assign countResult variable.
 			countResult, err := counter.Count(files, inputPath)
 			if err != nil {
 				log.Fatal(err)
 			}
+
+
 
 			view.Write(countResult, dists, ignoreListMap)
 		},

@@ -18,11 +18,6 @@ func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]strin
 			return ignoreListMap, nil
 		}
 
-		// if v != ".gitignore" {
-		// 	abs, _ := Parse(v)
-		// 	return nil, fmt.Errorf("[INFO]: ignore file must be .gitignore\n not exist %s", abs)
-		// }
-
 		p, err := Parse(v)
 		if err != nil {
 			return nil, err
@@ -36,6 +31,7 @@ func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]strin
 		if err != nil {
 			return nil, err
 		}
+
 		defer f.Close()
 
 		scanner := bufio.NewScanner(f)
@@ -76,6 +72,7 @@ func MakeIgnoreList[eOri string | []string](ignoreFile eOri) (map[string][]strin
 		return nil, fmt.Errorf("[ERROR]: type of ignores is not valid")
 	}
 }
+
 
 func IsDir(path string) bool {
 	info, err := os.Stat(path)

@@ -46,7 +46,7 @@ func contains(path string, ignores []string) bool {
 	}
 	pathExt := fp.Ext(path)
 	if pathExt == "" {
-		return slices.Contains(ignores, filepath.Base(path))
+		return slices.Contains(ignores, fp.Base(path))
 	}
 	return slices.Contains(ignores, pathExt)
 }
